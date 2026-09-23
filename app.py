@@ -1,181 +1,174 @@
+import os
+
 from flask import Flask, render_template, request, session, redirect, url_for
 import mysql.connector
 from werkzeug.security import check_password_hash
 
-app = Flask(__name__)
-app.secret_key = "change-this-to-a-long-random-secret-key"
 
-# ---------------- HOME ----------------
+app = Flask(__name__)
+
+# --------------------------------------------------
+# FLASK SECRET KEY
+# --------------------------------------------------
+
+app.secret_key = os.getenv(
+    "SECRET_KEY",
+    "local-development-secret-key"
+)
+
+
+# --------------------------------------------------
+# DATABASE CONNECTION
+# --------------------------------------------------
+
 def get_db_connection():
 
-    connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="chary_scents"
-    )
+    db_host = os.getenv("DB_HOST", "localhost")
 
-    return connection
+    connection_settings = {
+        "host": db_host,
+        "port": int(os.getenv("DB_PORT", "3306")),
+        "user": os.getenv("DB_USER", "root"),
+        "password": os.getenv("DB_PASSWORD", ""),
+        "database": os.getenv("DB_NAME", "chary_scents")
+    }
+
+    # When running on Render/Aiven, use SSL
+    if db_host != "localhost":
+
+        connection_settings["ssl_ca"] = os.getenv(
+            "DB_SSL_CA",
+            "/etc/secrets/ca.pem"
+        )
+
+        connection_settings["ssl_verify_cert"] = True
+
+    return mysql.connector.connect(**connection_settings)
+
+
+# --------------------------------------------------
+# PRODUCT DATA
+# --------------------------------------------------
+
+products = [
+
+    {
+        "id": 1,
+        "name": "Designer Perfume",
+        "category": "Perfumes",
+        "price": 35000,
+        "image": "perfume.jpg",
+        "description": "A beautiful long-lasting fragrance suitable for everyday use."
+    },
+
+    {
+        "id": 2,
+        "name": "Premium Perfume Oil",
+        "category": "Perfume Oils",
+        "price": 15000,
+        "image": "perfume_oil.jpg",
+        "description": "Long-lasting fragrance oil with a beautiful scent."
+    },
+
+    {
+        "id": 3,
+        "name": "Pink Lip Gloss",
+        "category": "Lip Gloss",
+        "price": 10000,
+        "image": "lip_gloss.jpg",
+        "description": "Smooth and glossy lip finish for everyday beauty."
+    },
+
+    {
+        "id": 4,
+        "name": "Classic Lipstick",
+        "category": "Lipsticks",
+        "price": 12000,
+        "image": "lipstick.jpg",
+        "description": "Beautiful lipstick for a confident look."
+    },
+
+    {
+        "id": 5,
+        "name": "Makeup Kit",
+        "category": "Makeup",
+        "price": 45000,
+        "image": "makeup.jpg",
+        "description": "A complete beauty kit for your makeup needs."
+    },
+
+    {
+        "id": 6,
+        "name": "Skincare Set",
+        "category": "Skincare",
+        "price": 40000,
+        "image": "skincare.jpg",
+        "description": "Beauty and skincare products for your daily routine."
+    },
+
+    {
+        "id": 7,
+        "name": "Beauty Gift Set",
+        "category": "Gift Sets",
+        "price": 55000,
+        "image": "gift_set.jpg",
+        "description": "A beautiful beauty package perfect for gifting."
+    },
+
+    {
+        "id": 8,
+        "name": "Beauty Accessories",
+        "category": "Accessories",
+        "price": 20000,
+        "image": "accessories.jpg",
+        "description": "Useful and stylish beauty accessories."
+    }
+
+]
+
+
+# --------------------------------------------------
+# HOME
+# --------------------------------------------------
 
 @app.route("/")
 def home():
+
     return render_template("home.html")
 
 
-# ---------------- SHOP ----------------
+# --------------------------------------------------
+# SHOP
+# --------------------------------------------------
 
 @app.route("/shop")
 def shop():
-    products = [
-        {
-            "id": 1,
-            "name": "Designer Perfume",
-            "category": "Perfumes",
-            "price": 35000,
-            "image": "perfume.jpg",
-            "description": "A beautiful long-lasting fragrance suitable for everyday use."
-        },
-        {
-            "id": 2,
-            "name": "Premium Perfume Oil",
-            "category": "Perfume Oils",
-            "price": 15000,
-            "image": "perfume_oil.jpg",
-            "description": "Long-lasting fragrance oil with a beautiful scent."
-        },
-        {
-            "id": 3,
-            "name": "Pink Lip Gloss",
-            "category": "Lip Gloss",
-            "price": 10000,
-            "image": "lip_gloss.jpg",
-            "description": "Smooth and glossy lip finish for everyday beauty."
-        },
-        {
-            "id": 4,
-            "name": "Classic Lipstick",
-            "category": "Lipsticks",
-            "price": 12000,
-            "image": "lipstick.jpg",
-            "description": "Beautiful lipstick for a confident look."
-        },
-        {
-            "id": 5,
-            "name": "Makeup Kit",
-            "category": "Makeup",
-            "price": 45000,
-            "image": "makeup.jpg",
-            "description": "A complete beauty kit for your makeup needs."
-        },
-        {
-            "id": 6,
-            "name": "Skincare Set",
-            "category": "Skincare",
-            "price": 40000,
-            "image": "skincare.jpg",
-            "description": "Beauty and skincare products for your daily routine."
-        },
-        {
-            "id": 7,
-            "name": "Beauty Gift Set",
-            "category": "Gift Sets",
-            "price": 55000,
-            "image": "gift_set.jpg",
-            "description": "A beautiful beauty package perfect for gifting."
-        },
-        {
-            "id": 8,
-            "name": "Beauty Accessories",
-            "category": "Accessories",
-            "price": 20000,
-            "image": "accessories.jpg",
-            "description": "Useful and stylish beauty accessories."
-        }
-    ]
 
-    return render_template("shop.html", products=products)
+    return render_template(
+        "shop.html",
+        products=products
+    )
 
 
-# ---------------- PRODUCT ----------------
+# --------------------------------------------------
+# PRODUCT DETAILS
+# --------------------------------------------------
 
 @app.route("/product/<int:product_id>")
 def product(product_id):
 
-    products = [
-        {
-            "id": 1,
-            "name": "Designer Perfume",
-            "category": "Perfumes",
-            "price": 35000,
-            "image": "perfume.jpg",
-            "description": "A beautiful long-lasting fragrance suitable for everyday use."
-        },
-        {
-            "id": 2,
-            "name": "Premium Perfume Oil",
-            "category": "Perfume Oils",
-            "price": 15000,
-            "image": "perfume_oil.jpg",
-            "description": "Long-lasting fragrance oil with a beautiful scent."
-        },
-        {
-            "id": 3,
-            "name": "Pink Lip Gloss",
-            "category": "Lip Gloss",
-            "price": 10000,
-            "image": "lip_gloss.jpg",
-            "description": "Smooth and glossy lip finish for everyday beauty."
-        },
-        {
-            "id": 4,
-            "name": "Classic Lipstick",
-            "category": "Lipsticks",
-            "price": 12000,
-            "image": "lipstick.jpg",
-            "description": "Beautiful lipstick for a confident look."
-        },
-        {
-            "id": 5,
-            "name": "Makeup Kit",
-            "category": "Makeup",
-            "price": 45000,
-            "image": "makeup.jpg",
-            "description": "A complete beauty kit for your makeup needs."
-        },
-        {
-            "id": 6,
-            "name": "Skincare Set",
-            "category": "Skincare",
-            "price": 40000,
-            "image": "skincare.jpg",
-            "description": "Beauty and skincare products for your daily routine."
-        },
-        {
-            "id": 7,
-            "name": "Beauty Gift Set",
-            "category": "Gift Sets",
-            "price": 55000,
-            "image": "gift_set.jpg",
-            "description": "A beautiful beauty package perfect for gifting."
-        },
-        {
-            "id": 8,
-            "name": "Beauty Accessories",
-            "category": "Accessories",
-            "price": 20000,
-            "image": "accessories.jpg",
-            "description": "Useful and stylish beauty accessories."
-        }
-    ]
-
     selected_product = None
 
-    for product in products:
-        if product["id"] == product_id:
-            selected_product = product
+    for product_item in products:
+
+        if product_item["id"] == product_id:
+
+            selected_product = product_item
+
             break
 
     if selected_product is None:
+
         return "Product not found", 404
 
     return render_template(
@@ -184,14 +177,20 @@ def product(product_id):
     )
 
 
-# ---------------- ABOUT ----------------
+# --------------------------------------------------
+# ABOUT
+# --------------------------------------------------
 
 @app.route("/about")
 def about():
+
     return render_template("about.html")
 
 
-# ---------------- CONTACT ----------------
+# --------------------------------------------------
+# CONTACT
+# --------------------------------------------------
+
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
 
@@ -214,7 +213,12 @@ def contact():
             VALUES (%s, %s, %s, %s)
         """
 
-        values = (name, phone, email, message)
+        values = (
+            name,
+            phone,
+            email,
+            message
+        )
 
         cursor.execute(sql, values)
 
@@ -229,31 +233,12 @@ def contact():
         "contact.html",
         message_sent=message_sent
     )
-@app.route("/admin/messages")
-def admin_messages():
 
-    if not session.get("admin_logged_in"):
-        return redirect(url_for("admin_login"))
 
-    connection = get_db_connection()
+# --------------------------------------------------
+# ADMIN LOGIN
+# --------------------------------------------------
 
-    cursor = connection.cursor(dictionary=True)
-
-    cursor.execute("""
-        SELECT *
-        FROM messages
-        ORDER BY created_at DESC
-    """)
-
-    messages = cursor.fetchall()
-
-    cursor.close()
-    connection.close()
-
-    return render_template(
-        "admin_messages.html",
-        messages=messages
-    )
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
 
@@ -267,7 +252,11 @@ def admin_login():
         cursor = connection.cursor(dictionary=True)
 
         cursor.execute(
-            "SELECT * FROM admins WHERE username = %s",
+            """
+            SELECT *
+            FROM admins
+            WHERE username = %s
+            """,
             (username,)
         )
 
@@ -282,10 +271,14 @@ def admin_login():
         ):
 
             session["admin_logged_in"] = True
+
             session["admin_id"] = admin["id"]
+
             session["admin_username"] = admin["username"]
 
-            return redirect(url_for("admin_messages"))
+            return redirect(
+                url_for("admin_messages")
+            )
 
         return render_template(
             "admin_login.html",
@@ -294,12 +287,78 @@ def admin_login():
 
     return render_template("admin_login.html")
 
+
+# --------------------------------------------------
+# ADMIN MESSAGES
+# --------------------------------------------------
+
+@app.route("/admin/messages")
+def admin_messages():
+
+    if not session.get("admin_logged_in"):
+
+        return redirect(
+            url_for("admin_login")
+        )
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor(
+        dictionary=True
+    )
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM messages
+        ORDER BY created_at DESC
+        """
+    )
+
+    messages = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return render_template(
+        "admin_messages.html",
+        messages=messages
+    )
+
+
+# --------------------------------------------------
+# ADMIN LOGOUT
+# --------------------------------------------------
+
 @app.route("/admin/logout")
 def admin_logout():
 
-    session.pop("admin_logged_in", None)
+    session.pop(
+        "admin_logged_in",
+        None
+    )
 
-    return redirect(url_for("admin_login"))
+    session.pop(
+        "admin_id",
+        None
+    )
+
+    session.pop(
+        "admin_username",
+        None
+    )
+
+    return redirect(
+        url_for("admin_login")
+    )
+
+
+# --------------------------------------------------
+# RUN APPLICATION
+# --------------------------------------------------
 
 if __name__ == "__main__":
-    app.run(debug=True)
+
+    app.run(
+        debug=True
+    )
