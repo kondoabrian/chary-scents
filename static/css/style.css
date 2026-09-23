@@ -1088,3 +1088,186 @@ img {
     }
 
 }
+/* =========================================
+   SHARE CHARY SCENTS SECTION
+========================================= */
+
+.share-section {
+    padding: 80px 0;
+    background: #f8f5f2;
+}
+
+.share-box {
+    max-width: 950px;
+    margin: 0 auto;
+    padding: 55px 50px;
+    background: #ffffff;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid #eee5df;
+}
+
+/* Share text */
+
+.share-content {
+    max-width: 700px;
+    margin: 0 auto 30px;
+}
+
+.share-content .section-label {
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.share-content h2 {
+    margin-bottom: 15px;
+    font-size: 34px;
+    font-weight: 700;
+}
+
+.share-content p:not(.section-label) {
+    margin: 0 auto;
+    max-width: 620px;
+    color: #666;
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+
+/* =========================================
+   SHARE BUTTONS
+========================================= */
+
+.share-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.share-actions .btn {
+    min-width: 145px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Button hover effect */
+
+.share-actions .btn:hover {
+    transform: translateY(-3px);
+}
+
+
+/* =========================================
+   COPY LINK BUTTON
+========================================= */
+
+.share-actions .btn-main {
+    border: none;
+}
+
+
+/* =========================================
+   WHATSAPP BUTTON
+========================================= */
+
+.share-actions .whatsapp-button {
+    background: #25D366;
+    color: #ffffff;
+    border: 1px solid #25D366;
+}
+
+.share-actions .whatsapp-button:hover {
+    background: #1ebe5d;
+    color: #ffffff;
+}
+
+
+/* =========================================
+   BUTTON ICONS
+========================================= */
+
+.share-actions i {
+    margin-right: 6px;
+    font-size: 17px;
+}
+
+
+/* =========================================
+   COPY SUCCESS MESSAGE
+========================================= */
+
+.copy-message {
+    min-height: 25px;
+    margin-top: 20px;
+    color: #198754;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   MOBILE RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 768px) {
+
+    .share-section {
+        padding: 60px 15px;
+    }
+
+    .share-box {
+        padding: 40px 20px;
+        border-radius: 16px;
+    }
+
+    .share-content h2 {
+        font-size: 27px;
+    }
+
+    .share-content p:not(.section-label) {
+        font-size: 15px;
+    }
+
+    .share-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .share-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 400px) {
+
+    .share-box {
+        padding: 35px 15px;
+    }
+
+    .share-content h2 {
+        font-size: 24px;
+    }
+
+    .share-content p:not(.section-label) {
+        font-size: 14px;
+    }
+
+    .share-actions .btn {
+        max-width: 100%;
+    }
+}
