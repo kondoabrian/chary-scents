@@ -6,127 +6,145 @@ Home | Chary Scents
 
 {% block content %}
 
+
 <!-- ================= HERO ================= -->
 
 <section class="hero">
 
-```
-<div class="hero-overlay"></div>
+    <div class="hero-overlay"></div>
 
-<div class="container hero-content">
+    <div class="container hero-content">
 
-    <p class="hero-small-title">
-        PREMIUM BEAUTY & FRAGRANCE
-    </p>
+        <p class="hero-small-title">
+            PREMIUM BEAUTY & FRAGRANCE
+        </p>
 
-    <h1>
-        CHARY SCENTS
-    </h1>
+        <h1>
+            CHARY SCENTS
+        </h1>
 
-    <h2>
-        Your Beauty, Our Passion
-    </h2>
+        <h2>
+            Your Beauty, Our Passion
+        </h2>
 
-    <p class="hero-description">
-        Discover premium perfumes, fragrance oils,
-        makeup, skincare products and beauty accessories.
-    </p>
+        <p class="hero-description">
+            Discover premium perfumes, fragrance oils,
+            makeup, skincare products and beauty accessories.
+        </p>
 
-    <div class="hero-buttons">
+        <div class="hero-buttons">
 
-        <a
-            href="{{ url_for('shop') }}"
-            class="btn btn-main"
-        >
-            Shop Now
-        </a>
+            <a
+                href="{{ url_for('shop') }}"
+                class="btn btn-main"
+            >
+                Shop Now
+            </a>
 
-        <a
-            href="{{ url_for('contact') }}"
-            class="btn btn-outline-light"
-        >
-            Contact Us
-        </a>
+            <a
+                href="{{ url_for('contact') }}"
+                class="btn btn-outline-light"
+            >
+                Contact Us
+            </a>
+
+        </div>
+
+        <p class="hero-location">
+
+            <i class="bi bi-geo-alt"></i>
+
+            Bunga, along Ggaba Road,
+            Kampala, Uganda
+
+        </p>
 
     </div>
 
-    <p class="hero-location">
-
-        <i class="bi bi-geo-alt"></i>
-
-        Bunga, along Ggaba Road,
-        Kampala, Uganda
-
-    </p>
-
-</div>
-```
-
 </section>
+
+
 
 <!-- ================= TRUST BAR ================= -->
 
 <section class="trust-section">
 
-```
-<div class="container">
+    <div class="container">
 
-    <div class="row g-0">
+        <div class="row g-0">
 
-        <div class="col-md-3 trust-item">
+            <div class="col-md-3 trust-item">
 
-            <i class="bi bi-truck"></i>
+                <i class="bi bi-truck"></i>
 
-            <div>
+                <div>
 
-                <h5>Fast Delivery</h5>
+                    <h5>
+                        Fast Delivery
+                    </h5>
 
-                <p>Around Kampala</p>
+                    <p>
+                        Around Kampala
+                    </p>
 
-            </div>
-
-        </div>
-
-
-        <div class="col-md-3 trust-item">
-
-            <i class="bi bi-gem"></i>
-
-            <div>
-
-                <h5>Authentic Products</h5>
-
-                <p>Quality you can trust</p>
+                </div>
 
             </div>
 
-        </div>
 
+            <div class="col-md-3 trust-item">
 
-        <div class="col-md-3 trust-item">
+                <i class="bi bi-gem"></i>
 
-            <i class="bi bi-tag"></i>
+                <div>
 
-            <div>
+                    <h5>
+                        Authentic Products
+                    </h5>
 
-                <h5>Affordable Prices</h5>
+                    <p>
+                        Quality you can trust
+                    </p>
 
-                <p>Beauty for every budget</p>
+                </div>
 
             </div>
 
-        </div>
+
+            <div class="col-md-3 trust-item">
+
+                <i class="bi bi-tag"></i>
+
+                <div>
+
+                    <h5>
+                        Affordable Prices
+                    </h5>
+
+                    <p>
+                        Beauty for every budget
+                    </p>
+
+                </div>
+
+            </div>
 
 
-        <div class="col-md-3 trust-item">
+            <div class="col-md-3 trust-item">
 
-            <i class="bi bi-heart"></i>
+                <i class="bi bi-heart"></i>
 
-            <div>
+                <div>
 
-                <h5>Friendly Service</h5>
+                    <h5>
+                        Friendly Service
+                    </h5>
 
-                <p>We're here to help</p>
+                    <p>
+                        We're here to help
+                    </p>
+
+                </div>
 
             </div>
 
@@ -134,421 +152,148 @@ Home | Chary Scents
 
     </div>
 
-</div>
-```
-
 </section>
+
+
 
 <!-- ================= CATEGORIES ================= -->
 
 <section class="section category-section">
 
-```
-<div class="container">
+    <div class="container">
 
-    <div class="section-heading">
+        <div class="section-heading">
 
-        <p>EXPLORE</p>
+            <p>
+                EXPLORE
+            </p>
 
-        <h2>
-            Shop By Category
-        </h2>
+            <h2>
+                Shop By Category
+            </h2>
 
-        <span></span>
-
-    </div>
-
-
-    <div class="row g-4">
-
-        <div class="col-6 col-md-3">
-
-            <a
-                href="{{ url_for('shop') }}"
-                class="category-card"
-            >
-
-                <img
-                    src="{{ url_for('static',
-                    filename='images/perfume.jpg') }}"
-                    alt="Perfumes"
-                >
-
-                <div>
-
-                    <h4>Perfumes</h4>
-
-                    <span>Explore Collection →</span>
-
-                </div>
-
-            </a>
+            <span></span>
 
         </div>
 
 
-        <div class="col-6 col-md-3">
+        <div class="row g-4">
 
-            <a
-                href="{{ url_for('shop') }}"
-                class="category-card"
-            >
 
-                <img
-                    src="{{ url_for('static',
-                    filename='images/perfume_oil.jpg') }}"
-                    alt="Perfume Oils"
-                >
-
-                <div>
-
-                    <h4>Perfume Oils</h4>
-
-                    <span>Explore Collection →</span>
-
-                </div>
-
-            </a>
-
-        </div>
-
-
-        <div class="col-6 col-md-3">
-
-            <a
-                href="{{ url_for('shop') }}"
-                class="category-card"
-            >
-
-                <img
-                    src="{{ url_for('static',
-                    filename='images/lip_gloss.jpg') }}"
-                    alt="Lip Gloss"
-                >
-
-                <div>
-
-                    <h4>Lip Gloss</h4>
-
-                    <span>Explore Collection →</span>
-
-                </div>
-
-            </a>
-
-        </div>
-
-
-        <div class="col-6 col-md-3">
-
-            <a
-                href="{{ url_for('shop') }}"
-                class="category-card"
-            >
-
-                <img
-                    src="{{ url_for('static',
-                    filename='images/makeup.jpg') }}"
-                    alt="Makeup"
-                >
-
-                <div>
-
-                    <h4>Makeup</h4>
-
-                    <span>Explore Collection →</span>
-
-                </div>
-
-            </a>
-
-        </div>
-
-    </div>
-
-</div>
-```
-
-</section>
-
-<!-- ================= FEATURED PRODUCTS ================= -->
-
-<section class="section products-section">
-
-```
-<div class="container">
-
-    <div class="section-heading">
-
-        <p>OUR COLLECTION</p>
-
-        <h2>
-            Featured Products
-        </h2>
-
-        <span></span>
-
-    </div>
-
-
-    <div class="row g-4">
-
-        <div class="col-md-6 col-lg-3">
-
-            <div class="product-card">
-
-                <div class="product-image">
-
-                    <span class="product-badge">
-                        Featured
-                    </span>
-
-                    <img
-                        src="{{ url_for('static',
-                        filename='images/perfume.jpg') }}"
-                        alt="Designer Perfume"
-                    >
-
-                </div>
-
-                <div class="product-info">
-
-                    <small>
-                        PERFUMES
-                    </small>
-
-                    <h3>
-                        Designer Perfume
-                    </h3>
-
-                    <p class="price">
-                        UGX 35,000
-                    </p>
-
-                    <a
-                        href="{{ url_for('product',
-                        product_id=1) }}"
-                        class="product-button"
-                    >
-                        View Product
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="col-md-6 col-lg-3">
-
-            <div class="product-card">
-
-                <div class="product-image">
-
-                    <span class="product-badge">
-                        Popular
-                    </span>
-
-                    <img
-                        src="{{ url_for('static',
-                        filename='images/perfume_oil.jpg') }}"
-                        alt="Perfume Oil"
-                    >
-
-                </div>
-
-                <div class="product-info">
-
-                    <small>
-                        PERFUME OILS
-                    </small>
-
-                    <h3>
-                        Premium Perfume Oil
-                    </h3>
-
-                    <p class="price">
-                        UGX 15,000
-                    </p>
-
-                    <a
-                        href="{{ url_for('product',
-                        product_id=2) }}"
-                        class="product-button"
-                    >
-                        View Product
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="col-md-6 col-lg-3">
-
-            <div class="product-card">
-
-                <div class="product-image">
-
-                    <img
-                        src="{{ url_for('static',
-                        filename='images/lip_gloss.jpg') }}"
-                        alt="Pink Lip Gloss"
-                    >
-
-                </div>
-
-                <div class="product-info">
-
-                    <small>
-                        LIP GLOSS
-                    </small>
-
-                    <h3>
-                        Pink Lip Gloss
-                    </h3>
-
-                    <p class="price">
-                        UGX 10,000
-                    </p>
-
-                    <a
-                        href="{{ url_for('product',
-                        product_id=3) }}"
-                        class="product-button"
-                    >
-                        View Product
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="col-md-6 col-lg-3">
-
-            <div class="product-card">
-
-                <div class="product-image">
-
-                    <span class="product-badge">
-                        New
-                    </span>
-
-                    <img
-                        src="{{ url_for('static',
-                        filename='images/makeup.jpg') }}"
-                        alt="Makeup Kit"
-                    >
-
-                </div>
-
-                <div class="product-info">
-
-                    <small>
-                        MAKEUP
-                    </small>
-
-                    <h3>
-                        Makeup Kit
-                    </h3>
-
-                    <p class="price">
-                        UGX 45,000
-                    </p>
-
-                    <a
-                        href="{{ url_for('product',
-                        product_id=5) }}"
-                        class="product-button"
-                    >
-                        View Product
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="center-button">
-
-        <a
-            href="{{ url_for('shop') }}"
-            class="btn btn-main"
-        >
-            View All Products
-        </a>
-
-    </div>
-
-</div>
-```
-
-</section>
-
-<!-- ================= ABOUT PREVIEW ================= -->
-
-<section class="about-preview">
-
-```
-<div class="container">
-
-    <div class="row align-items-center g-5">
-
-        <div class="col-lg-6">
-
-            <div class="about-image">
-
-                <img
-                    src="{{ url_for('static',
-                    filename='images/skincare.jpg') }}"
-                    alt="Chary Scents Beauty Products"
-                >
-
-            </div>
-
-        </div>
-
-
-        <div class="col-lg-6">
-
-            <div class="about-content">
-
-                <p class="section-label">
-                    ABOUT CHARY SCENTS
-                </p>
-
-                <h2>
-                    Beauty Made For You
-                </h2>
-
-                <p>
-                    Chary Scents is a trusted beauty store
-                    located in Bunga along Ggaba Road,
-                    Kampala.
-                </p>
-
-                <p>
-                    We provide authentic perfumes,
-                    fragrance oils, lip gloss, makeup,
-                    skincare products and beauty accessories
-                    at affordable prices.
-                </p>
+            <div class="col-6 col-md-3">
 
                 <a
-                    href="{{ url_for('about') }}"
-                    class="btn btn-main"
+                    href="{{ url_for('shop') }}"
+                    class="category-card"
                 >
-                    Learn More
+
+                    <img
+                        src="{{ url_for('static', filename='images/perfume.jpg') }}"
+                        alt="Perfumes"
+                    >
+
+                    <div>
+
+                        <h4>
+                            Perfumes
+                        </h4>
+
+                        <span>
+                            Explore Collection →
+                        </span>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+
+            <div class="col-6 col-md-3">
+
+                <a
+                    href="{{ url_for('shop') }}"
+                    class="category-card"
+                >
+
+                    <img
+                        src="{{ url_for('static', filename='images/perfume_oil.jpg') }}"
+                        alt="Perfume Oils"
+                    >
+
+                    <div>
+
+                        <h4>
+                            Perfume Oils
+                        </h4>
+
+                        <span>
+                            Explore Collection →
+                        </span>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+
+            <div class="col-6 col-md-3">
+
+                <a
+                    href="{{ url_for('shop') }}"
+                    class="category-card"
+                >
+
+                    <img
+                        src="{{ url_for('static', filename='images/lip_gloss.jpg') }}"
+                        alt="Lip Gloss"
+                    >
+
+                    <div>
+
+                        <h4>
+                            Lip Gloss
+                        </h4>
+
+                        <span>
+                            Explore Collection →
+                        </span>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+
+            <div class="col-6 col-md-3">
+
+                <a
+                    href="{{ url_for('shop') }}"
+                    class="category-card"
+                >
+
+                    <img
+                        src="{{ url_for('static', filename='images/makeup.jpg') }}"
+                        alt="Makeup"
+                    >
+
+                    <div>
+
+                        <h4>
+                            Makeup
+                        </h4>
+
+                        <span>
+                            Explore Collection →
+                        </span>
+
+                    </div>
+
                 </a>
 
             </div>
@@ -557,206 +302,789 @@ Home | Chary Scents
 
     </div>
 
-</div>
-```
+</section>
+
+
+
+<!-- ================= FEATURED PRODUCTS ================= -->
+
+<section class="section products-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p>
+                OUR COLLECTION
+            </p>
+
+            <h2>
+                Featured Products
+            </h2>
+
+            <span></span>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <!-- PRODUCT 1 -->
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="product-card">
+
+                    <div class="product-image">
+
+                        <span class="product-badge">
+                            Featured
+                        </span>
+
+                        <img
+                            src="{{ url_for('static', filename='images/perfume.jpg') }}"
+                            alt="Designer Perfume"
+                        >
+
+                    </div>
+
+
+                    <div class="product-info">
+
+                        <small>
+                            PERFUMES
+                        </small>
+
+                        <h3>
+                            Designer Perfume
+                        </h3>
+
+                        <p class="price">
+                            UGX 35,000
+                        </p>
+
+                        <a
+                            href="{{ url_for('product', product_id=1) }}"
+                            class="product-button"
+                        >
+                            View Product
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PRODUCT 2 -->
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="product-card">
+
+                    <div class="product-image">
+
+                        <span class="product-badge">
+                            Popular
+                        </span>
+
+                        <img
+                            src="{{ url_for('static', filename='images/perfume_oil.jpg') }}"
+                            alt="Premium Perfume Oil"
+                        >
+
+                    </div>
+
+
+                    <div class="product-info">
+
+                        <small>
+                            PERFUME OILS
+                        </small>
+
+                        <h3>
+                            Premium Perfume Oil
+                        </h3>
+
+                        <p class="price">
+                            UGX 15,000
+                        </p>
+
+                        <a
+                            href="{{ url_for('product', product_id=2) }}"
+                            class="product-button"
+                        >
+                            View Product
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PRODUCT 3 -->
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="product-card">
+
+                    <div class="product-image">
+
+                        <img
+                            src="{{ url_for('static', filename='images/lip_gloss.jpg') }}"
+                            alt="Pink Lip Gloss"
+                        >
+
+                    </div>
+
+
+                    <div class="product-info">
+
+                        <small>
+                            LIP GLOSS
+                        </small>
+
+                        <h3>
+                            Pink Lip Gloss
+                        </h3>
+
+                        <p class="price">
+                            UGX 10,000
+                        </p>
+
+                        <a
+                            href="{{ url_for('product', product_id=3) }}"
+                            class="product-button"
+                        >
+                            View Product
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PRODUCT 4 -->
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="product-card">
+
+                    <div class="product-image">
+
+                        <span class="product-badge">
+                            New
+                        </span>
+
+                        <img
+                            src="{{ url_for('static', filename='images/makeup.jpg') }}"
+                            alt="Makeup Kit"
+                        >
+
+                    </div>
+
+
+                    <div class="product-info">
+
+                        <small>
+                            MAKEUP
+                        </small>
+
+                        <h3>
+                            Makeup Kit
+                        </h3>
+
+                        <p class="price">
+                            UGX 45,000
+                        </p>
+
+                        <a
+                            href="{{ url_for('product', product_id=5) }}"
+                            class="product-button"
+                        >
+                            View Product
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="center-button">
+
+            <a
+                href="{{ url_for('shop') }}"
+                class="btn btn-main"
+            >
+                View All Products
+            </a>
+
+        </div>
+
+    </div>
 
 </section>
+
+
+
+<!-- ================= ABOUT PREVIEW ================= -->
+
+<section class="about-preview">
+
+    <div class="container">
+
+        <div class="row align-items-center g-5">
+
+
+            <div class="col-lg-6">
+
+                <div class="about-image">
+
+                    <img
+                        src="{{ url_for('static', filename='images/skincare.jpg') }}"
+                        alt="Chary Scents Beauty Products"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <div class="col-lg-6">
+
+                <div class="about-content">
+
+                    <p class="section-label">
+                        ABOUT CHARY SCENTS
+                    </p>
+
+                    <h2>
+                        Beauty Made For You
+                    </h2>
+
+                    <p>
+                        Chary Scents is a trusted beauty store
+                        located in Bunga along Ggaba Road,
+                        Kampala.
+                    </p>
+
+                    <p>
+                        We provide authentic perfumes,
+                        fragrance oils, lip gloss, makeup,
+                        skincare products and beauty accessories
+                        at affordable prices.
+                    </p>
+
+                    <a
+                        href="{{ url_for('about') }}"
+                        class="btn btn-main"
+                    >
+                        Learn More
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
 
 <!-- ================= WHY US ================= -->
 
 <section class="section why-section">
 
-```
-<div class="container">
+    <div class="container">
 
-    <div class="section-heading">
+        <div class="section-heading">
 
-        <p>WHY US</p>
+            <p>
+                WHY US
+            </p>
 
-        <h2>
-            Why Choose Chary Scents?
-        </h2>
+            <h2>
+                Why Choose Chary Scents?
+            </h2>
 
-        <span></span>
+            <span></span>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="why-card">
+
+                    <i class="bi bi-gem"></i>
+
+                    <h4>
+                        Authentic Products
+                    </h4>
+
+                    <p>
+                        We focus on quality beauty
+                        products you can trust.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="why-card">
+
+                    <i class="bi bi-wallet2"></i>
+
+                    <h4>
+                        Affordable Prices
+                    </h4>
+
+                    <p>
+                        Beauty products available
+                        at competitive prices.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="why-card">
+
+                    <i class="bi bi-bag-heart"></i>
+
+                    <h4>
+                        Wholesale & Retail
+                    </h4>
+
+                    <p>
+                        Shop for yourself or purchase
+                        products in larger quantities.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="why-card">
+
+                    <i class="bi bi-truck"></i>
+
+                    <h4>
+                        Fast Delivery
+                    </h4>
+
+                    <p>
+                        Convenient delivery
+                        around Kampala.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
-
-
-    <div class="row g-4">
-
-        <div class="col-md-6 col-lg-3">
-
-            <div class="why-card">
-
-                <i class="bi bi-gem"></i>
-
-                <h4>
-                    Authentic Products
-                </h4>
-
-                <p>
-                    We focus on quality beauty products
-                    you can trust.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="col-md-6 col-lg-3">
-
-            <div class="why-card">
-
-                <i class="bi bi-wallet2"></i>
-
-                <h4>
-                    Affordable Prices
-                </h4>
-
-                <p>
-                    Beauty products available at
-                    competitive prices.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="col-md-6 col-lg-3">
-
-            <div class="why-card">
-
-                <i class="bi bi-bag-heart"></i>
-
-                <h4>
-                    Wholesale & Retail
-                </h4>
-
-                <p>
-                    Shop for yourself or purchase
-                    products in larger quantities.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="col-md-6 col-lg-3">
-
-            <div class="why-card">
-
-                <i class="bi bi-truck"></i>
-
-                <h4>
-                    Fast Delivery
-                </h4>
-
-                <p>
-                    Convenient delivery around
-                    Kampala.
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-```
 
 </section>
+
+
 
 <!-- ================= PROMO ================= -->
 
 <section class="promo-section">
 
-```
-<div class="promo-overlay"></div>
+    <div class="promo-overlay"></div>
 
-<div class="container promo-content">
+    <div class="container promo-content">
 
-    <p>
-        YOUR BEAUTY JOURNEY STARTS HERE
-    </p>
+        <p>
+            YOUR BEAUTY JOURNEY STARTS HERE
+        </p>
 
-    <h2>
-        Look Good. Feel Confident.
-    </h2>
+        <h2>
+            Look Good. Feel Confident.
+        </h2>
 
-    <a
-        href="{{ url_for('shop') }}"
-        class="btn btn-light"
-    >
-        Shop Collection
-    </a>
+        <a
+            href="{{ url_for('shop') }}"
+            class="btn btn-light"
+        >
+            Shop Collection
+        </a>
 
-</div>
-```
+    </div>
 
 </section>
+
+
 
 <!-- ================= SHARE WEBSITE ================= -->
 
 <section class="share-section">
 
-```
-<div class="container">
+    <div class="container">
 
-    <div class="share-box">
+        <div class="share-box">
 
-        <div class="share-content">
 
-            <p class="section-label">
-                SHARE CHARY SCENTS
-            </p>
+            <div class="share-content">
 
-            <h2>
-                Let Others Discover Chary Scents
-            </h2>
+                <p class="section-label">
+                    SHARE CHARY SCENTS
+                </p>
 
-            <p>
-                Know someone who loves perfumes,
-                makeup and beauty products?
-                Share our website with them.
-            </p>
+                <h2>
+                    Let Others Discover Chary Scents
+                </h2>
+
+                <p>
+                    Know someone who loves perfumes,
+                    makeup and beauty products?
+                    Share our website with them.
+                </p>
+
+            </div>
+
+
+
+            <div class="share-actions">
+
+
+                <!-- COPY LINK -->
+
+                <button
+                    type="button"
+                    class="btn btn-main"
+                    onclick="copyWebsiteLink()"
+                >
+
+                    <i class="bi bi-link-45deg"></i>
+
+                    Copy Link
+
+                </button>
+
+
+
+                <!-- SHARE WEBSITE -->
+
+                <button
+                    type="button"
+                    class="btn btn-outline-dark"
+                    onclick="openSharePopup()"
+                >
+
+                    <i class="bi bi-share-fill"></i>
+
+                    Share Website
+
+                </button>
+
+
+
+                <!-- WHATSAPP -->
+
+                <a
+                    href="https://wa.me/?text=Check%20out%20Chary%20Scents%20-%20Your%20Beauty%2C%20Our%20Passion%20https%3A%2F%2Fchary-scents.onrender.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn whatsapp-button"
+                >
+
+                    <i class="bi bi-whatsapp"></i>
+
+                    Share on WhatsApp
+
+                </a>
+
+            </div>
+
+
+
+            <!-- COPY MESSAGE -->
+
+            <div
+                id="copyMessage"
+                class="copy-message"
+                role="status"
+                aria-live="polite"
+            ></div>
 
         </div>
 
+    </div>
 
-        <div class="share-actions">
-
-            <button
-                type="button"
-                class="btn btn-main"
-                onclick="copyWebsiteLink()"
-            >
-
-                <i class="bi bi-link-45deg"></i>
-
-                Copy Link
-
-            </button>
+</section>
 
 
-            <button
-                type="button"
-                class="btn btn-outline-dark"
-                onclick="shareWebsite()"
-            >
+
+<!-- ================= SHARE POPUP ================= -->
+
+<div
+    id="sharePopup"
+    class="share-popup"
+    aria-hidden="true"
+>
+
+
+    <!-- DARK BACKGROUND -->
+
+    <div
+        class="share-popup-overlay"
+        onclick="closeSharePopup()"
+    ></div>
+
+
+
+    <!-- POPUP -->
+
+    <div
+        class="share-popup-box"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sharePopupTitle"
+    >
+
+
+        <!-- CLOSE -->
+
+        <button
+            type="button"
+            class="share-popup-close"
+            onclick="closeSharePopup()"
+            aria-label="Close sharing window"
+        >
+
+            <i class="bi bi-x-lg"></i>
+
+        </button>
+
+
+
+        <div class="share-popup-content">
+
+
+            <!-- ICON -->
+
+            <div class="share-popup-icon">
 
                 <i class="bi bi-share-fill"></i>
 
-                Share Website
+            </div>
 
-            </button>
+
+
+            <h2 id="sharePopupTitle">
+                Share Chary Scents
+            </h2>
+
+
+
+            <p>
+                Share our website with your friends
+                and family.
+            </p>
+
+
+
+            <!-- SHARE OPTIONS -->
+
+            <div class="share-options">
+
+
+                <!-- WHATSAPP -->
+
+                <a
+                    id="shareWhatsApp"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="share-option whatsapp-share"
+                >
+
+                    <i class="bi bi-whatsapp"></i>
+
+                    <span>
+                        WhatsApp
+                    </span>
+
+                </a>
+
+
+
+                <!-- FACEBOOK -->
+
+                <a
+                    id="shareFacebook"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="share-option facebook-share"
+                >
+
+                    <i class="bi bi-facebook"></i>
+
+                    <span>
+                        Facebook
+                    </span>
+
+                </a>
+
+
+
+                <!-- X / TWITTER -->
+
+                <a
+                    id="shareTwitter"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="share-option twitter-share"
+                >
+
+                    <i class="bi bi-twitter-x"></i>
+
+                    <span>
+                        X / Twitter
+                    </span>
+
+                </a>
+
+
+
+                <!-- TELEGRAM -->
+
+                <a
+                    id="shareTelegram"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="share-option telegram-share"
+                >
+
+                    <i class="bi bi-telegram"></i>
+
+                    <span>
+                        Telegram
+                    </span>
+
+                </a>
+
+
+
+                <!-- EMAIL -->
+
+                <a
+                    id="shareEmail"
+                    href="#"
+                    class="share-option email-share"
+                >
+
+                    <i class="bi bi-envelope-fill"></i>
+
+                    <span>
+                        Email
+                    </span>
+
+                </a>
+
+
+
+                <!-- COPY LINK -->
+
+                <button
+                    type="button"
+                    class="share-option copy-share"
+                    onclick="copyFromSharePopup()"
+                >
+
+                    <i class="bi bi-link-45deg"></i>
+
+                    <span>
+                        Copy Link
+                    </span>
+
+                </button>
+
+            </div>
+
+
+
+            <!-- POPUP MESSAGE -->
+
+            <div
+                id="sharePopupMessage"
+                class="share-popup-message"
+                role="status"
+                aria-live="polite"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= WHATSAPP CTA ================= -->
+
+<section class="whatsapp-section">
+
+    <div class="container">
+
+        <div class="whatsapp-box">
+
+
+            <div>
+
+                <p>
+                    NEED HELP CHOOSING A PRODUCT?
+                </p>
+
+                <h2>
+                    Chat With Chary Scents
+                </h2>
+
+            </div>
+
 
 
             <a
-                href="https://wa.me/?text=Check%20out%20Chary%20Scents%20-%20Your%20Beauty%2C%20Our%20Passion%20https%3A%2F%2Fchary-scents.onrender.com"
+                href="https://wa.me/256706740166"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="btn whatsapp-button"
@@ -764,67 +1092,15 @@ Home | Chary Scents
 
                 <i class="bi bi-whatsapp"></i>
 
-                Share on WhatsApp
+                WhatsApp Us
 
             </a>
 
         </div>
 
-
-        <div
-            id="copyMessage"
-            class="copy-message"
-            role="status"
-            aria-live="polite"
-        ></div>
-
     </div>
-
-</div>
-```
 
 </section>
 
-<!-- ================= WHATSAPP CTA ================= -->
-
-<section class="whatsapp-section">
-
-```
-<div class="container">
-
-    <div class="whatsapp-box">
-
-        <div>
-
-            <p>
-                NEED HELP CHOOSING A PRODUCT?
-            </p>
-
-            <h2>
-                Chat With Chary Scents
-            </h2>
-
-        </div>
-
-
-        <a
-            href="https://wa.me/256706740166"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn whatsapp-button"
-        >
-
-            <i class="bi bi-whatsapp"></i>
-
-            WhatsApp Us
-
-        </a>
-
-    </div>
-
-</div>
-```
-
-</section>
 
 {% endblock %}

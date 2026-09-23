@@ -1,301 +1,872 @@
-/* =========================================
-PRODUCT SEARCH
-========================================= */
+// =========================================================
+// CHARY SCENTS - WEBSITE JAVASCRIPT
+// =========================================================
 
-const searchInput = document.getElementById("productSearch");
 
-if (searchInput) {
 
-```
-searchInput.addEventListener("input", function () {
+// =========================================================
+// PRODUCT SEARCH
+// =========================================================
 
-    const searchText =
-        this.value.toLowerCase();
+function searchProducts() {
 
-    const products =
-        document.querySelectorAll(".product-item");
+    const searchInput =
+        document.getElementById("productSearch");
 
-    products.forEach(function (product) {
 
-        const productName =
-            product.innerText.toLowerCase();
+    if (!searchInput) {
 
-        if (productName.includes(searchText)) {
+        return;
 
-            product.style.display = "";
+    }
 
-        } else {
 
-            product.style.display = "none";
+    const searchValue =
+        searchInput.value.toLowerCase();
 
-        }
 
-    });
+    const productCards =
+        document.querySelectorAll(
+            ".product-card"
+        );
 
-});
-```
 
-}
+    productCards.forEach(
+        function(card) {
 
-/* =========================================
-CATEGORY FILTER
-========================================= */
+            const productText =
+                card.innerText.toLowerCase();
 
-const filterButtons =
-document.querySelectorAll(".filter-btn");
 
-filterButtons.forEach(function (button) {
+            const column =
+                card.closest(
+                    ".col-md-6, .col-lg-3"
+                );
 
-```
-button.addEventListener("click", function () {
 
-    const selectedCategory =
-        this.dataset.category;
+            if (!column) {
 
-
-    filterButtons.forEach(function (btn) {
-
-        btn.classList.remove("active");
-
-    });
-
-
-    this.classList.add("active");
-
-
-    const products =
-        document.querySelectorAll(".product-item");
-
-
-    products.forEach(function (product) {
-
-        const productCategory =
-            product.dataset.category;
-
-
-        if (
-            selectedCategory === "all" ||
-            productCategory === selectedCategory
-        ) {
-
-            product.style.display = "";
-
-        } else {
-
-            product.style.display = "none";
-
-        }
-
-    });
-
-});
-```
-
-});
-
-/* =========================================
-PRODUCT QUANTITY
-========================================= */
-
-function changeQuantity(amount) {
-
-```
-const quantityElement =
-    document.getElementById("quantity");
-
-if (!quantityElement) {
-
-    return;
-
-}
-
-
-let quantity =
-    parseInt(quantityElement.innerText);
-
-
-quantity += amount;
-
-
-if (quantity < 1) {
-
-    quantity = 1;
-
-}
-
-
-quantityElement.innerText = quantity;
-```
-
-}
-
-/* =========================================
-TEMPORARY CART MESSAGE
-========================================= */
-
-function addToCart(productName) {
-
-```
-alert(
-    productName +
-    " has been added to your cart."
-);
-```
-
-}
-
-/* =========================================
-COPY WEBSITE LINK
-========================================= */
-
-function copyWebsiteLink() {
-
-```
-const websiteUrl =
-    window.location.origin;
-
-const messageElement =
-    document.getElementById("copyMessage");
-
-
-if (navigator.clipboard) {
-
-    navigator.clipboard.writeText(websiteUrl)
-
-        .then(function () {
-
-            if (messageElement) {
-
-                messageElement.innerHTML =
-                    '<i class="bi bi-check-circle-fill"></i> ' +
-                    'Website link copied successfully!';
+                return;
 
             }
 
-        })
 
-        .catch(function () {
+            if (
+                productText.includes(
+                    searchValue
+                )
+            ) {
 
-            copyUsingFallback(
-                websiteUrl,
-                messageElement
-            );
+                column.style.display =
+                    "";
 
-        });
+            } else {
 
-} else {
+                column.style.display =
+                    "none";
 
-    copyUsingFallback(
-        websiteUrl,
-        messageElement
+            }
+
+        }
     );
 
 }
-```
 
-}
 
-/* =========================================
-COPY LINK FALLBACK
-========================================= */
 
-function copyUsingFallback(
-websiteUrl,
-messageElement
+// =========================================================
+// CATEGORY FILTER
+// =========================================================
+
+function filterProducts(
+    category,
+    clickedButton
 ) {
 
-```
-const textArea =
-    document.createElement("textarea");
-
-textArea.value = websiteUrl;
-
-textArea.style.position = "fixed";
-
-textArea.style.left = "-999999px";
-
-document.body.appendChild(textArea);
-
-textArea.focus();
-
-textArea.select();
+    const productCards =
+        document.querySelectorAll(
+            ".product-card"
+        );
 
 
-try {
+    const filterButtons =
+        document.querySelectorAll(
+            ".filter-btn"
+        );
 
-    document.execCommand("copy");
 
-    if (messageElement) {
+    filterButtons.forEach(
+        function(button) {
 
-        messageElement.innerHTML =
-            '<i class="bi bi-check-circle-fill"></i> ' +
-            'Website link copied successfully!';
+            button.classList.remove(
+                "active"
+            );
 
-    }
+        }
+    );
 
-} catch (error) {
 
-    if (messageElement) {
+    if (clickedButton) {
 
-        messageElement.innerHTML =
-            "Please copy the website address manually.";
+        clickedButton.classList.add(
+            "active"
+        );
 
     }
 
-}
 
+    productCards.forEach(
+        function(card) {
 
-document.body.removeChild(textArea);
-```
-
-}
-
-/* =========================================
-SHARE WEBSITE
-========================================= */
-
-function shareWebsite() {
-
-```
-const websiteUrl =
-    window.location.origin;
-
-
-const shareData = {
-
-    title: "Chary Scents",
-
-    text:
-        "Check out Chary Scents - " +
-        "Your Beauty, Our Passion.",
-
-    url: websiteUrl
-
-};
-
-
-if (navigator.share) {
-
-    navigator.share(shareData)
-
-        .catch(function (error) {
-
-            if (error.name !== "AbortError") {
-
-                console.log(
-                    "Sharing failed:",
-                    error
+            const productCategory =
+                card.getAttribute(
+                    "data-category"
                 );
+
+
+            const column =
+                card.closest(
+                    ".col-md-6, .col-lg-3"
+                );
+
+
+            if (!column) {
+
+                return;
 
             }
 
-        });
 
-} else {
+            if (
+                category === "all" ||
+                productCategory === category
+            ) {
 
-    copyWebsiteLink();
+                column.style.display =
+                    "";
+
+            } else {
+
+                column.style.display =
+                    "none";
+
+            }
+
+        }
+    );
 
 }
-```
+
+
+
+// =========================================================
+// QUANTITY
+// =========================================================
+
+function increaseQuantity() {
+
+    const quantityElement =
+        document.getElementById(
+            "quantity"
+        );
+
+
+    if (!quantityElement) {
+
+        return;
+
+    }
+
+
+    let quantity =
+        parseInt(
+            quantityElement.innerText
+        );
+
+
+    if (isNaN(quantity)) {
+
+        quantity = 1;
+
+    }
+
+
+    quantity++;
+
+
+    quantityElement.innerText =
+        quantity;
 
 }
+
+
+
+function decreaseQuantity() {
+
+    const quantityElement =
+        document.getElementById(
+            "quantity"
+        );
+
+
+    if (!quantityElement) {
+
+        return;
+
+    }
+
+
+    let quantity =
+        parseInt(
+            quantityElement.innerText
+        );
+
+
+    if (isNaN(quantity)) {
+
+        quantity = 1;
+
+    }
+
+
+    if (quantity > 1) {
+
+        quantity--;
+
+    }
+
+
+    quantityElement.innerText =
+        quantity;
+
+}
+
+
+
+// =========================================================
+// ADD TO CART
+// =========================================================
+
+function addToCart(
+    productName
+) {
+
+    alert(
+        productName +
+        " has been added to your cart."
+    );
+
+}
+
+
+
+// =========================================================
+// DEMO PACKAGE / PRODUCT SELECTION
+// =========================================================
+
+function selectPackage(
+    packageName
+) {
+
+    alert(
+        packageName +
+        " package selected. " +
+        "This is currently a demonstration."
+    );
+
+}
+
+
+
+// =========================================================
+// GET WEBSITE URL
+// =========================================================
+
+function getWebsiteUrl() {
+
+    return (
+        window.location.origin +
+        "/"
+    );
+
+}
+
+
+
+// =========================================================
+// COPY WEBSITE LINK
+// =========================================================
+
+function copyWebsiteLink() {
+
+    const websiteUrl =
+        getWebsiteUrl();
+
+
+    if (
+        navigator.clipboard &&
+        window.isSecureContext
+    ) {
+
+        navigator.clipboard
+            .writeText(
+                websiteUrl
+            )
+
+            .then(
+                function() {
+
+                    showCopyMessage(
+                        "✓ Website link copied successfully!"
+                    );
+
+                }
+            )
+
+            .catch(
+                function() {
+
+                    copyUsingFallback(
+                        websiteUrl
+                    );
+
+                }
+            );
+
+    } else {
+
+        copyUsingFallback(
+            websiteUrl
+        );
+
+    }
+
+}
+
+
+
+// =========================================================
+// COPY FALLBACK
+// =========================================================
+
+function copyUsingFallback(
+    websiteUrl
+) {
+
+    const textArea =
+        document.createElement(
+            "textarea"
+        );
+
+
+    textArea.value =
+        websiteUrl;
+
+
+    textArea.style.position =
+        "fixed";
+
+    textArea.style.left =
+        "-9999px";
+
+    textArea.style.top =
+        "0";
+
+
+    document.body.appendChild(
+        textArea
+    );
+
+
+    textArea.focus();
+
+    textArea.select();
+
+
+    let successful =
+        false;
+
+
+    try {
+
+        successful =
+            document.execCommand(
+                "copy"
+            );
+
+    } catch (error) {
+
+        successful =
+            false;
+
+    }
+
+
+    document.body.removeChild(
+        textArea
+    );
+
+
+    if (successful) {
+
+        showCopyMessage(
+            "✓ Website link copied successfully!"
+        );
+
+    } else {
+
+        showCopyMessage(
+            "Copy was not allowed. " +
+            "Website link: " +
+            websiteUrl
+        );
+
+    }
+
+}
+
+
+
+// =========================================================
+// SHOW COPY MESSAGE
+// =========================================================
+
+function showCopyMessage(
+    message
+) {
+
+    const messageElement =
+        document.getElementById(
+            "copyMessage"
+        );
+
+
+    if (!messageElement) {
+
+        return;
+
+    }
+
+
+    messageElement.innerHTML =
+        message;
+
+
+    setTimeout(
+        function() {
+
+            messageElement.innerHTML =
+                "";
+
+        },
+        5000
+    );
+
+}
+
+
+
+// =========================================================
+// OPEN SHARE POPUP
+// =========================================================
+
+function openSharePopup() {
+
+    const popup =
+        document.getElementById(
+            "sharePopup"
+        );
+
+
+    if (!popup) {
+
+        return;
+
+    }
+
+
+    const websiteUrl =
+        getWebsiteUrl();
+
+
+    const encodedUrl =
+        encodeURIComponent(
+            websiteUrl
+        );
+
+
+    const shareText =
+        "Check out Chary Scents - " +
+        "Your Beauty, Our Passion.";
+
+
+    const encodedText =
+        encodeURIComponent(
+            shareText
+        );
+
+
+
+    // =========================================
+    // WHATSAPP
+    // =========================================
+
+    const whatsapp =
+        document.getElementById(
+            "shareWhatsApp"
+        );
+
+
+    if (whatsapp) {
+
+        whatsapp.href =
+            "https://wa.me/?text=" +
+            encodedText +
+            "%20" +
+            encodedUrl;
+
+    }
+
+
+
+    // =========================================
+    // FACEBOOK
+    // =========================================
+
+    const facebook =
+        document.getElementById(
+            "shareFacebook"
+        );
+
+
+    if (facebook) {
+
+        facebook.href =
+            "https://www.facebook.com/sharer/sharer.php?u=" +
+            encodedUrl;
+
+    }
+
+
+
+    // =========================================
+    // X / TWITTER
+    // =========================================
+
+    const twitter =
+        document.getElementById(
+            "shareTwitter"
+        );
+
+
+    if (twitter) {
+
+        twitter.href =
+            "https://twitter.com/intent/tweet?text=" +
+            encodedText +
+            "&url=" +
+            encodedUrl;
+
+    }
+
+
+
+    // =========================================
+    // TELEGRAM
+    // =========================================
+
+    const telegram =
+        document.getElementById(
+            "shareTelegram"
+        );
+
+
+    if (telegram) {
+
+        telegram.href =
+            "https://t.me/share/url?url=" +
+            encodedUrl +
+            "&text=" +
+            encodedText;
+
+    }
+
+
+
+    // =========================================
+    // EMAIL
+    // =========================================
+
+    const email =
+        document.getElementById(
+            "shareEmail"
+        );
+
+
+    if (email) {
+
+        email.href =
+            "mailto:?subject=" +
+            encodeURIComponent(
+                "Check out Chary Scents"
+            ) +
+            "&body=" +
+            encodedText +
+            "%0A%0A" +
+            encodedUrl;
+
+    }
+
+
+
+    // =========================================
+    // SHOW POPUP
+    // =========================================
+
+    popup.classList.add(
+        "active"
+    );
+
+
+    popup.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    // Stop page from scrolling
+    // while popup is open
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+
+// =========================================================
+// CLOSE SHARE POPUP
+// =========================================================
+
+function closeSharePopup() {
+
+    const popup =
+        document.getElementById(
+            "sharePopup"
+        );
+
+
+    if (!popup) {
+
+        return;
+
+    }
+
+
+    popup.classList.remove(
+        "active"
+    );
+
+
+    popup.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+
+// =========================================================
+// COPY FROM SHARE POPUP
+// =========================================================
+
+function copyFromSharePopup() {
+
+    const websiteUrl =
+        getWebsiteUrl();
+
+
+    if (
+        navigator.clipboard &&
+        window.isSecureContext
+    ) {
+
+        navigator.clipboard
+            .writeText(
+                websiteUrl
+            )
+
+            .then(
+                function() {
+
+                    showSharePopupMessage(
+                        "✓ Website link copied!"
+                    );
+
+                }
+            )
+
+            .catch(
+                function() {
+
+                    copyPopupUsingFallback(
+                        websiteUrl
+                    );
+
+                }
+            );
+
+    } else {
+
+        copyPopupUsingFallback(
+            websiteUrl
+        );
+
+    }
+
+}
+
+
+
+// =========================================================
+// COPY POPUP FALLBACK
+// =========================================================
+
+function copyPopupUsingFallback(
+    websiteUrl
+) {
+
+    const textArea =
+        document.createElement(
+            "textarea"
+        );
+
+
+    textArea.value =
+        websiteUrl;
+
+
+    textArea.style.position =
+        "fixed";
+
+    textArea.style.left =
+        "-9999px";
+
+    textArea.style.top =
+        "0";
+
+
+    document.body.appendChild(
+        textArea
+    );
+
+
+    textArea.focus();
+
+    textArea.select();
+
+
+    let successful =
+        false;
+
+
+    try {
+
+        successful =
+            document.execCommand(
+                "copy"
+            );
+
+    } catch (error) {
+
+        successful =
+            false;
+
+    }
+
+
+    document.body.removeChild(
+        textArea
+    );
+
+
+    if (successful) {
+
+        showSharePopupMessage(
+            "✓ Website link copied!"
+        );
+
+    } else {
+
+        showSharePopupMessage(
+            "Copy failed. Please copy the URL manually."
+        );
+
+    }
+
+}
+
+
+
+// =========================================================
+// SHOW POPUP MESSAGE
+// =========================================================
+
+function showSharePopupMessage(
+    message
+) {
+
+    const messageElement =
+        document.getElementById(
+            "sharePopupMessage"
+        );
+
+
+    if (!messageElement) {
+
+        return;
+
+    }
+
+
+    messageElement.innerHTML =
+        message;
+
+
+    setTimeout(
+        function() {
+
+            messageElement.innerHTML =
+                "";
+
+        },
+        4000
+    );
+
+}
+
+
+
+// =========================================================
+// CLOSE POPUP WITH ESC KEY
+// =========================================================
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeSharePopup();
+
+        }
+
+    }
+);
