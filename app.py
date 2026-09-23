@@ -1,9 +1,21 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, session, redirect, url_for
+import mysql.connector
+from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
-
+app.secret_key = "change-this-to-a-long-random-secret-key"
 
 # ---------------- HOME ----------------
+def get_db_connection():
+
+    connection = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="chary_scents"
+    )
+
+    return connection
 
 @app.route("/")
 def home():
@@ -180,13 +192,114 @@ def about():
 
 
 # ---------------- CONTACT ----------------
-
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
-    return render_template("contact.html")
 
+    message_sent = False
 
-# ---------------- RUN ----------------
+    if request.method == "POST":
+
+        name = request.form.get("name")
+        phone = request.form.get("phone")
+        email = request.form.get("email")
+        message = request.form.get("message")
+
+        connection = get_db_connection()
+
+        cursor = connection.cursor()
+
+        sql = """
+            INSERT INTO messages
+            (name, phone, email, message)
+            VALUES (%s, %s, %s, %s)
+        """
+
+        values = (name, phone, email, message)
+
+        cursor.execute(sql, values)
+
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+        message_sent = True
+
+    return render_template(
+        "contact.html",
+        message_sent=message_sent
+    )
+@app.route("/admin/messages")
+def admin_messages():
+
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+
+    connection = get_db_connection()
+
+    cursor = connection.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT *
+        FROM messages
+        ORDER BY created_at DESC
+    """)
+
+    messages = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return render_template(
+        "admin_messages.html",
+        messages=messages
+    )
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+
+    if request.method == "POST":
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        connection = get_db_connection()
+
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute(
+            "SELECT * FROM admins WHERE username = %s",
+            (username,)
+        )
+
+        admin = cursor.fetchone()
+
+        cursor.close()
+        connection.close()
+
+        if admin and check_password_hash(
+            admin["password"],
+            password
+        ):
+
+            session["admin_logged_in"] = True
+            session["admin_id"] = admin["id"]
+            session["admin_username"] = admin["username"]
+
+            return redirect(url_for("admin_messages"))
+
+        return render_template(
+            "admin_login.html",
+            error="Invalid username or password."
+        )
+
+    return render_template("admin_login.html")
+
+@app.route("/admin/logout")
+def admin_logout():
+
+    session.pop("admin_logged_in", None)
+
+    return redirect(url_for("admin_login"))
 
 if __name__ == "__main__":
     app.run(debug=True)
