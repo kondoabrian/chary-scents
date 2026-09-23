@@ -2,3 +2,8 @@
 __pycache__/
 *.pyc
 .env
+
+.idea/
+main.py
+mombile_app.py
+sock.py
