@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}
+Shop | Chary Scents
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page-header">
+
+    <div class="container">
+
+        <p>DISCOVER OUR COLLECTION</p>
+
+        <h1>
+            Shop Beauty Products
+        </h1>
+
+        <span>
+            Quality beauty products for every occasion.
+        </span>
+
+    </div>
+
+</section>
+
+
+<section class="section">
+
+    <div class="container">
+
+        <!-- Search -->
+
+        <div class="shop-toolbar">
+
+            <div class="search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    id="productSearch"
+                    placeholder="Search products..."
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- Categories -->
+
+        <div class="category-filter">
+
+            <button
+                class="filter-btn active"
+                data-category="all"
+            >
+                All
+            </button>
+
+            <button
+                class="filter-btn"
+                data-category="Perfumes"
+            >
+                Perfumes
+            </button>
+
+            <button
+                class="filter-btn"
+                data-category="Perfume Oils"
+            >
+                Perfume Oils
+            </button>
+
+            <button
+                class="filter-btn"
+                data-category="Lip Gloss"
+            >
+                Lip Gloss
+            </button>
+
+            <button
+                class="filter-btn"
+                data-category="Lipsticks"
+            >
+                Lipsticks
+            </button>
+
+            <button
+                class="filter-btn"
+                data-category="Makeup"
+            >
+                Makeup
+            </button>
+
+            <button
+                class="filter-btn"
+                data-category="Skincare"
+            >
+                Skincare
+            </button>
+
+            <button
+                class="filter-btn"
+                data-category="Gift Sets"
+            >
+                Gift Sets
+            </button>
+
+            <button
+                class="filter-btn"
+                data-category="Accessories"
+            >
+                Accessories
+            </button>
+
+        </div>
+
+
+        <!-- Products -->
+
+        <div class="row g-4" id="productGrid">
+
+            {% for product in products %}
+
+            <div
+                class="col-sm-6 col-lg-3 product-item"
+                data-category="{{ product.category }}"
+            >
+
+                <div class="product-card">
+
+                    <div class="product-image">
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='images/' + product.image
+                            ) }}"
+                            alt="{{ product.name }}"
+                        >
+
+                    </div>
+
+
+                    <div class="product-info">
+
+                        <small>
+                            {{ product.category }}
+                        </small>
+
+                        <h3>
+                            {{ product.name }}
+                        </h3>
+
+                        <p class="product-description">
+                            {{ product.description }}
+                        </p>
+
+                        <p class="price">
+                            UGX {{ "{:,}".format(product.price) }}
+                        </p>
+
+                        <a
+                            href="{{ url_for(
+                                'product',
+                                product_id=product.id
+                            ) }}"
+                            class="product-button"
+                        >
+                            View Product
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

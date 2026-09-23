@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}
+About Us | Chary Scents
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page-header">
+
+    <div class="container">
+
+        <p>GET TO KNOW US</p>
+
+        <h1>
+            About Chary Scents
+        </h1>
+
+    </div>
+
+</section>
+
+
+<section class="section">
+
+    <div class="container">
+
+        <div class="row align-items-center g-5">
+
+            <div class="col-lg-6">
+
+                <div class="about-image">
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='images/gift_set.jpg'
+                        ) }}"
+                        alt="Chary Scents"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-6">
+
+                <p class="section-label">
+                    YOUR BEAUTY, OUR PASSION
+                </p>
+
+                <h2>
+                    Welcome To Chary Scents
+                </h2>
+
+                <p>
+                    Chary Scents is a beauty store located
+                    in Bunga, along Ggaba Road, Kampala,
+                    Uganda.
+                </p>
+
+                <p>
+                    We provide perfumes, fragrance oils,
+                    lip gloss, lipsticks, makeup products,
+                    skincare products, beauty gift sets
+                    and accessories.
+                </p>
+
+                <p>
+                    Whether you are shopping for yourself
+                    or looking for a beautiful gift,
+                    Chary Scents provides a variety of
+                    beauty products to choose from.
+                </p>
+
+
+                <div class="about-features">
+
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Authentic Products
+                    </div>
+
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Affordable Prices
+                    </div>
+
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Wholesale & Retail
+                    </div>
+
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Friendly Customer Service
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="about-values">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p>WHAT WE VALUE</p>
+
+            <h2>
+                Our Commitment
+            </h2>
+
+            <span></span>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+
+                <div class="why-card">
+
+                    <i class="bi bi-gem"></i>
+
+                    <h4>
+                        Quality
+                    </h4>
+
+                    <p>
+                        We aim to provide beauty products
+                        that meet our customers' needs.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="why-card">
+
+                    <i class="bi bi-heart"></i>
+
+                    <h4>
+                        Customer Care
+                    </h4>
+
+                    <p>
+                        We value every customer and aim
+                        to provide friendly service.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="why-card">
+
+                    <i class="bi bi-stars"></i>
+
+                    <h4>
+                        Beauty
+                    </h4>
+
+                    <p>
+                        We make it easier to discover
+                        products that help you feel confident.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
