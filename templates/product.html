@@ -4,14 +4,18 @@
 {{ product.name }} | Charry Scents
 {% endblock %}
 
-
 {% block content %}
+
+
+<!-- ================= PRODUCT PAGE HEADER ================= -->
 
 <section class="page-header">
 
     <div class="container">
 
-        <p>{{ product.category }}</p>
+        <p>
+            {{ product.category }}
+        </p>
 
         <h1>
             {{ product.name }}
@@ -22,11 +26,47 @@
 </section>
 
 
+
+<!-- ================= PRODUCT DETAILS ================= -->
+
 <section class="section">
 
     <div class="container">
 
+
+        <!-- ================= BACK BUTTONS ================= -->
+
+        <div class="mb-4 d-flex gap-2 flex-wrap">
+
+            <a
+                href="{{ url_for('shop') }}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Back to Shop
+            </a>
+
+
+            {% if session.get("admin_logged_in") %}
+
+                <a
+                    href="{{ url_for('admin_products') }}"
+                    class="btn btn-main"
+                >
+                    <i class="bi bi-box-seam"></i>
+                    Back to Manage Products
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+
         <div class="row align-items-center g-5">
+
+
+            <!-- ================= PRODUCT IMAGE ================= -->
 
             <div class="col-lg-6">
 
@@ -35,9 +75,10 @@
                     <img
                         src="{{ url_for(
                             'static',
-                            filename='images/' + product.image
+                            filename='images/' ~ product.image
                         ) }}"
                         alt="{{ product.name }}"
+                        loading="lazy"
                     >
 
                 </div>
@@ -45,30 +86,51 @@
             </div>
 
 
+
+            <!-- ================= PRODUCT INFORMATION ================= -->
+
             <div class="col-lg-6">
 
                 <div class="product-detail-content">
+
+
+                    <!-- CATEGORY -->
 
                     <p class="section-label">
                         {{ product.category }}
                     </p>
 
+
+                    <!-- PRODUCT NAME -->
+
                     <h1>
                         {{ product.name }}
                     </h1>
+
+
+                    <!-- STARS -->
 
                     <div class="stars">
                         ★★★★★
                     </div>
 
+
+                    <!-- PRICE -->
+
                     <h2 class="detail-price">
-                        UGX {{ "{:,}".format(product.price) }}
+                        UGX {{ "{:,.0f}".format(product.price) }}
                     </h2>
+
+
+                    <!-- DESCRIPTION -->
 
                     <p>
                         {{ product.description }}
                     </p>
 
+
+
+                    <!-- ================= QUANTITY ================= -->
 
                     <div class="quantity-box">
 
@@ -81,17 +143,21 @@
                             <button
                                 type="button"
                                 onclick="changeQuantity(-1)"
+                                aria-label="Decrease quantity"
                             >
                                 −
                             </button>
+
 
                             <span id="quantity">
                                 1
                             </span>
 
+
                             <button
                                 type="button"
                                 onclick="changeQuantity(1)"
+                                aria-label="Increase quantity"
                             >
                                 +
                             </button>
@@ -101,23 +167,66 @@
                     </div>
 
 
-                    <button
-                        class="btn btn-main add-cart-btn"
-                        onclick="addToCart('{{ product.name }}')"
-                    >
-                        <i class="bi bi-bag-plus"></i>
-                        Add To Cart
-                    </button>
+
+                    <!-- ================= PRODUCT ACTIONS ================= -->
+
+                    <div class="d-flex gap-2 flex-wrap mt-4">
 
 
-                    <a
-                        href="https://wa.me/256706740166"
-                        target="_blank"
-                        class="btn whatsapp-button detail-whatsapp"
-                    >
-                        <i class="bi bi-whatsapp"></i>
-                        Order on WhatsApp
-                    </a>
+                        <!-- ADD TO CART -->
+
+                        <button
+                            type="button"
+                            class="btn btn-main add-cart-btn"
+                            onclick='addToCart({{ product.name | tojson}})'
+                        >
+
+                            <i class="bi bi-bag-plus"></i>
+
+                            Add To Cart
+
+                        </button>
+
+
+
+                        <!-- WHATSAPP ORDER -->
+
+                        <a
+                            href="https://wa.me/256706740166?text={{ (
+                                'Hello Charry Scents, I would like to order ' ~
+                                product.name ~
+                                '. Price: UGX ' ~
+                                '{:,.0f}'.format(product.price)
+                            ) | urlencode }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn whatsapp-button detail-whatsapp"
+                        >
+
+                            <i class="bi bi-whatsapp"></i>
+
+                            Order on WhatsApp
+
+                        </a>
+
+                    </div>
+
+
+
+                    <!-- ================= CONTINUE SHOPPING ================= -->
+
+                    <div class="mt-4">
+
+                        <a
+                            href="{{ url_for('shop') }}"
+                            class="product-button"
+                        >
+                            <i class="bi bi-arrow-left"></i>
+                            Continue Shopping
+                        </a>
+
+                    </div>
+
 
                 </div>
 
@@ -128,5 +237,6 @@
     </div>
 
 </section>
+
 
 {% endblock %}

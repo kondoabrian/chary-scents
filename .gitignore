@@ -8,3 +8,5 @@ ca.pem
 main.py
 mombile_app.py
 sock.py
+
+migrate_db.py

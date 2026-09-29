@@ -1,79 +1,47 @@
-//appling javascript to my website for my beautifull customers
+// ==========================================================
+// CHARRY SCENTS JAVASCRIPT
+// ==========================================================
 
-// you can search products my customers
+
+// ==========================================================
+// PRODUCT SEARCH
+// ==========================================================
 
 function searchProducts() {
 
     const searchInput =
         document.getElementById("productSearch");
 
-
     if (!searchInput) {
-
         return;
-
     }
 
 
     const searchValue =
-        searchInput.value.toLowerCase();
+        searchInput.value
+            .toLowerCase()
+            .trim();
 
 
-    const productCards =
-        document.querySelectorAll(
-            ".product-card"
-        );
-
-
-    productCards.forEach(
-        function(card) {
-
-            const productText =
-                card.innerText.toLowerCase();
-
-
-            const column =
-                card.closest(
-                    ".col-md-6, .col-lg-3"
-                );
-
-
-            if (!column) {
-
-                return;
-
-            }
-
-
-            if (
-                productText.includes(
-                    searchValue
-                )
-            ) {
-
-                column.style.display =
-                    "";
-
-            } else {
-
-                column.style.display =
-                    "none";
-
-            }
-
-        }
-    );
+    applyProductFilters(searchValue);
 
 }
+
+
+
+// ==========================================================
+// CATEGORY FILTER
+// ==========================================================
+
+let selectedCategory = "all";
+
+
 function filterProducts(
     category,
     clickedButton
 ) {
 
-    const productCards =
-        document.querySelectorAll(
-            ".product-card"
-        );
+    selectedCategory = category;
 
 
     const filterButtons =
@@ -102,35 +70,126 @@ function filterProducts(
     }
 
 
+    const searchInput =
+        document.getElementById(
+            "productSearch"
+        );
+
+
+    let searchValue = "";
+
+
+    if (searchInput) {
+
+        searchValue =
+            searchInput.value
+                .toLowerCase()
+                .trim();
+
+    }
+
+
+    applyProductFilters(
+        searchValue
+    );
+
+}
+
+
+
+// ==========================================================
+// APPLY SEARCH + CATEGORY FILTER TOGETHER
+// ==========================================================
+
+function applyProductFilters(
+    searchValue = ""
+) {
+
+    const productCards =
+        document.querySelectorAll(
+            ".product-card"
+        );
+
+
+    let visibleProducts = 0;
+
+
     productCards.forEach(
         function(card) {
 
+
+            // Search through all text shown in the product card.
+            // This includes product name, category,
+            // description and price.
+
+            const productText =
+                card.innerText
+                    .toLowerCase();
+
+
+            // Get product category from:
+            // data-category="{{ product.category }}"
+
             const productCategory =
-                card.getAttribute(
-                    "data-category"
+                (
+                    card.getAttribute(
+                        "data-category"
+                    ) || ""
+                )
+                .toLowerCase();
+
+
+            const wantedCategory =
+                selectedCategory
+                    .toLowerCase();
+
+
+            // Check search text.
+
+            const matchesSearch =
+                searchValue === "" ||
+                productText.includes(
+                    searchValue
                 );
 
+
+            // Check selected category.
+
+            const matchesCategory =
+                wantedCategory === "all" ||
+                productCategory ===
+                wantedCategory;
+
+
+            // Find the Bootstrap column containing
+            // this product card.
 
             const column =
                 card.closest(
-                    ".col-md-6, .col-lg-3"
-                );
+                    ".product-item"
+                ) ||
+                card.closest(
+                    ".col-md-6"
+                ) ||
+                card.closest(
+                    ".col-lg-3"
+                ) ||
+                card.parentElement;
 
 
             if (!column) {
-
                 return;
-
             }
 
 
             if (
-                category === "all" ||
-                productCategory === category
+                matchesSearch &&
+                matchesCategory
             ) {
 
-                column.style.display =
-                    "";
+                column.style.display = "";
+
+                visibleProducts++;
 
             } else {
 
@@ -142,8 +201,130 @@ function filterProducts(
         }
     );
 
+
+    updateNoProductsMessage(
+        visibleProducts
+    );
+
 }
-function increaseQuantity() {
+
+
+
+// ==========================================================
+// SHOW MESSAGE WHEN SEARCH FINDS NOTHING
+// ==========================================================
+
+function updateNoProductsMessage(
+    visibleProducts
+) {
+
+    const message =
+        document.getElementById(
+            "noProductsMessage"
+        );
+
+
+    if (!message) {
+        return;
+    }
+
+
+    if (visibleProducts === 0) {
+
+        message.style.display =
+            "block";
+
+    } else {
+
+        message.style.display =
+            "none";
+
+    }
+
+}
+
+
+
+// ==========================================================
+// CLEAR SEARCH AND SHOW ALL PRODUCTS
+// ==========================================================
+
+function clearProductSearch() {
+
+    const searchInput =
+        document.getElementById(
+            "productSearch"
+        );
+
+
+    // Clear search box.
+
+    if (searchInput) {
+
+        searchInput.value = "";
+
+    }
+
+
+    // Return category to All.
+
+    selectedCategory = "all";
+
+
+    const filterButtons =
+        document.querySelectorAll(
+            ".filter-btn"
+        );
+
+
+    filterButtons.forEach(
+        function(button) {
+
+            button.classList.remove(
+                "active"
+            );
+
+
+            if (
+                button.getAttribute(
+                    "data-category"
+                ) === "all"
+            ) {
+
+                button.classList.add(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+
+    // Show every product again.
+
+    applyProductFilters("");
+
+
+    // Put cursor back into search box.
+
+    if (searchInput) {
+
+        searchInput.focus();
+
+    }
+
+}
+
+
+
+// ==========================================================
+// PRODUCT QUANTITY
+// ==========================================================
+
+function changeQuantity(
+    amount
+) {
 
     const quantityElement =
         document.getElementById(
@@ -152,9 +333,7 @@ function increaseQuantity() {
 
 
     if (!quantityElement) {
-
         return;
-
     }
 
 
@@ -171,64 +350,100 @@ function increaseQuantity() {
     }
 
 
-    quantity++;
+    quantity =
+        quantity + amount;
+
+
+    // Quantity cannot be below 1.
+
+    if (quantity < 1) {
+
+        quantity = 1;
+
+    }
 
 
     quantityElement.innerText =
         quantity;
 
 }
+
+
+
+// ==========================================================
+// OLD QUANTITY FUNCTIONS
+// ==========================================================
+// These are kept so any older buttons
+// on the website still continue working.
+
+function increaseQuantity() {
+
+    changeQuantity(1);
+
+}
+
 
 function decreaseQuantity() {
 
-    const quantityElement =
-        document.getElementById(
-            "quantity"
-        );
-
-
-    if (!quantityElement) {
-
-        return;
-
-    }
-
-
-    let quantity =
-        parseInt(
-            quantityElement.innerText
-        );
-
-
-    if (isNaN(quantity)) {
-
-        quantity = 1;
-
-    }
-
-
-    if (quantity > 1) {
-
-        quantity--;
-
-    }
-
-
-    quantityElement.innerText =
-        quantity;
+    changeQuantity(-1);
 
 }
+
+
+
+// ==========================================================
+// ADD TO CART
+// ==========================================================
 
 function addToCart(
     productName
 ) {
 
+    const quantityElement =
+        document.getElementById(
+            "quantity"
+        );
+
+
+    let quantity = 1;
+
+
+    if (quantityElement) {
+
+        const selectedQuantity =
+            parseInt(
+                quantityElement.innerText
+            );
+
+
+        if (
+            !isNaN(
+                selectedQuantity
+            )
+        ) {
+
+            quantity =
+                selectedQuantity;
+
+        }
+
+    }
+
+
     alert(
+        quantity +
+        " × " +
         productName +
-        " has been added to your cart."
+        " added to your cart."
     );
 
 }
+
+
+
+// ==========================================================
+// PACKAGE SELECTION
+// ==========================================================
 
 function selectPackage(
     packageName
@@ -241,7 +456,13 @@ function selectPackage(
     );
 
 }
-//get website
+
+
+
+// ==========================================================
+// GET WEBSITE URL
+// ==========================================================
+
 function getWebsiteUrl() {
 
     return (
@@ -250,7 +471,13 @@ function getWebsiteUrl() {
     );
 
 }
-//coping website link
+
+
+
+// ==========================================================
+// COPY WEBSITE LINK
+// ==========================================================
+
 function copyWebsiteLink() {
 
     const websiteUrl =
@@ -296,7 +523,13 @@ function copyWebsiteLink() {
     }
 
 }
-//coping fallback
+
+
+
+// ==========================================================
+// COPY WEBSITE FALLBACK
+// ==========================================================
+
 function copyUsingFallback(
     websiteUrl
 ) {
@@ -373,6 +606,12 @@ function copyUsingFallback(
 
 }
 
+
+
+// ==========================================================
+// SHOW COPY MESSAGE
+// ==========================================================
+
 function showCopyMessage(
     message
 ) {
@@ -384,9 +623,7 @@ function showCopyMessage(
 
 
     if (!messageElement) {
-
         return;
-
     }
 
 
@@ -405,7 +642,13 @@ function showCopyMessage(
     );
 
 }
-//opening share popup
+
+
+
+// ==========================================================
+// OPEN SHARE POPUP
+// ==========================================================
+
 function openSharePopup() {
 
     const popup =
@@ -415,9 +658,7 @@ function openSharePopup() {
 
 
     if (!popup) {
-
         return;
-
     }
 
 
@@ -440,7 +681,13 @@ function openSharePopup() {
         encodeURIComponent(
             shareText
         );
-    //watsap my customers
+
+
+
+    // ======================================================
+    // WHATSAPP
+    // ======================================================
+
     const whatsapp =
         document.getElementById(
             "shareWhatsApp"
@@ -456,7 +703,12 @@ function openSharePopup() {
             encodedUrl;
 
     }
-    //facebook my customers
+
+
+
+    // ======================================================
+    // FACEBOOK
+    // ======================================================
 
     const facebook =
         document.getElementById(
@@ -471,7 +723,13 @@ function openSharePopup() {
             encodedUrl;
 
     }
-    //twitter
+
+
+
+    // ======================================================
+    // X / TWITTER
+    // ======================================================
+
     const twitter =
         document.getElementById(
             "shareTwitter"
@@ -488,7 +746,11 @@ function openSharePopup() {
 
     }
 
-    //telegram
+
+
+    // ======================================================
+    // TELEGRAM
+    // ======================================================
 
     const telegram =
         document.getElementById(
@@ -505,6 +767,12 @@ function openSharePopup() {
             encodedText;
 
     }
+
+
+
+    // ======================================================
+    // EMAIL
+    // ======================================================
 
     const email =
         document.getElementById(
@@ -525,7 +793,12 @@ function openSharePopup() {
             encodedUrl;
 
     }
-    //showing popup
+
+
+
+    // ======================================================
+    // SHOW POPUP
+    // ======================================================
 
     popup.classList.add(
         "active"
@@ -537,11 +810,18 @@ function openSharePopup() {
         "false"
     );
 
+
     document.body.style.overflow =
         "hidden";
 
 }
-//closing from share popup
+
+
+
+// ==========================================================
+// CLOSE SHARE POPUP
+// ==========================================================
+
 function closeSharePopup() {
 
     const popup =
@@ -551,9 +831,7 @@ function closeSharePopup() {
 
 
     if (!popup) {
-
         return;
-
     }
 
 
@@ -573,7 +851,12 @@ function closeSharePopup() {
 
 }
 
-// coping from share popup
+
+
+// ==========================================================
+// COPY LINK FROM SHARE POPUP
+// ==========================================================
+
 function copyFromSharePopup() {
 
     const websiteUrl =
@@ -619,7 +902,13 @@ function copyFromSharePopup() {
     }
 
 }
+
+
+
+// ==========================================================
 // COPY POPUP FALLBACK
+// ==========================================================
+
 function copyPopupUsingFallback(
     websiteUrl
 ) {
@@ -694,7 +983,12 @@ function copyPopupUsingFallback(
 
 }
 
-//showing popup message
+
+
+// ==========================================================
+// SHOW SHARE POPUP MESSAGE
+// ==========================================================
+
 function showSharePopupMessage(
     message
 ) {
@@ -706,9 +1000,7 @@ function showSharePopupMessage(
 
 
     if (!messageElement) {
-
         return;
-
     }
 
 
@@ -728,7 +1020,12 @@ function showSharePopupMessage(
 
 }
 
-// close popup with esc key
+
+
+// ==========================================================
+// CLOSE SHARE POPUP WITH ESC KEY
+// ==========================================================
+
 document.addEventListener(
     "keydown",
     function(event) {
@@ -738,6 +1035,54 @@ document.addEventListener(
         ) {
 
             closeSharePopup();
+
+        }
+
+    }
+);
+
+
+
+// ==========================================================
+// INITIALIZE WEBSITE FEATURES
+// ==========================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+
+        // ==================================================
+        // PRODUCT SEARCH
+        // ==================================================
+
+        const searchInput =
+            document.getElementById(
+                "productSearch"
+            );
+
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                searchProducts
+            );
+
+        }
+
+
+        // ==================================================
+        // START SHOP WITH ALL PRODUCTS
+        // ==================================================
+
+        if (
+            document.querySelector(
+                ".product-card[data-category]"
+            )
+        ) {
+
+            applyProductFilters("");
 
         }
 

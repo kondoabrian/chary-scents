@@ -180,6 +180,8 @@ Home | Charry Scents
         <div class="row g-4">
 
 
+            <!-- PERFUMES -->
+
             <div class="col-6 col-md-3">
 
                 <a
@@ -209,6 +211,8 @@ Home | Charry Scents
             </div>
 
 
+
+            <!-- PERFUME OILS -->
 
             <div class="col-6 col-md-3">
 
@@ -240,6 +244,8 @@ Home | Charry Scents
 
 
 
+            <!-- LIP GLOSS -->
+
             <div class="col-6 col-md-3">
 
                 <a
@@ -269,6 +275,8 @@ Home | Charry Scents
             </div>
 
 
+
+            <!-- MAKEUP -->
 
             <div class="col-6 col-md-3">
 
@@ -327,200 +335,107 @@ Home | Charry Scents
         </div>
 
 
-        <div class="row g-4">
+        {% if products %}
+
+            <div class="row g-4">
+
+                {% for product in products %}
+
+                    <div class="col-md-6 col-lg-3">
+
+                        <div class="product-card">
+
+                            <div class="product-image">
 
 
-            <!-- PRODUCT 1 -->
+                                <!-- PRODUCT BADGES -->
 
-            <div class="col-md-6 col-lg-3">
+                                {% if loop.index == 1 %}
 
-                <div class="product-card">
+                                    <span class="product-badge">
+                                        New
+                                    </span>
 
-                    <div class="product-image">
+                                {% elif loop.index == 2 %}
 
-                        <span class="product-badge">
-                            Featured
-                        </span>
+                                    <span class="product-badge">
+                                        Featured
+                                    </span>
 
-                        <img
-                            src="{{ url_for('static', filename='images/perfume.jpg') }}"
-                            alt="Designer Perfume"
-                        >
+                                {% elif loop.index == 3 %}
+
+                                    <span class="product-badge">
+                                        Popular
+                                    </span>
+
+                                {% endif %}
+
+
+                                <!-- PRODUCT IMAGE -->
+
+                                <img
+                                    src="{{ url_for(
+                                        'static',
+                                        filename='images/' ~ product.image
+                                    ) }}"
+                                    alt="{{ product.name }}"
+                                    loading="lazy"
+                                >
+
+                            </div>
+
+
+                            <div class="product-info">
+
+                                <small>
+                                    {{ product.category | upper }}
+                                </small>
+
+
+                                <h3>
+                                    {{ product.name }}
+                                </h3>
+
+
+                                <p class="price">
+
+                                    UGX {{ "{:,.0f}".format(product.price) }}
+
+                                </p>
+
+
+                                <a
+                                    href="{{ url_for(
+                                        'product',
+                                        product_id=product.id
+                                    ) }}"
+                                    class="product-button"
+                                >
+                                    View Product
+                                </a>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-
-                    <div class="product-info">
-
-                        <small>
-                            PERFUMES
-                        </small>
-
-                        <h3>
-                            Designer Perfume
-                        </h3>
-
-                        <p class="price">
-                            UGX 35,000
-                        </p>
-
-                        <a
-                            href="{{ url_for('product', product_id=1) }}"
-                            class="product-button"
-                        >
-                            View Product
-                        </a>
-
-                    </div>
-
-                </div>
+                {% endfor %}
 
             </div>
 
 
+        {% else %}
 
-            <!-- PRODUCT 2 -->
+            <div class="text-center">
 
-            <div class="col-md-6 col-lg-3">
-
-                <div class="product-card">
-
-                    <div class="product-image">
-
-                        <span class="product-badge">
-                            Popular
-                        </span>
-
-                        <img
-                            src="{{ url_for('static', filename='images/perfume_oil.jpg') }}"
-                            alt="Premium Perfume Oil"
-                        >
-
-                    </div>
-
-
-                    <div class="product-info">
-
-                        <small>
-                            PERFUME OILS
-                        </small>
-
-                        <h3>
-                            Premium Perfume Oil
-                        </h3>
-
-                        <p class="price">
-                            UGX 15,000
-                        </p>
-
-                        <a
-                            href="{{ url_for('product', product_id=2) }}"
-                            class="product-button"
-                        >
-                            View Product
-                        </a>
-
-                    </div>
-
-                </div>
+                <p>
+                    No products are currently available.
+                </p>
 
             </div>
 
-
-
-            <!-- PRODUCT 3 -->
-
-            <div class="col-md-6 col-lg-3">
-
-                <div class="product-card">
-
-                    <div class="product-image">
-
-                        <img
-                            src="{{ url_for('static', filename='images/lip_gloss.jpg') }}"
-                            alt="Pink Lip Gloss"
-                        >
-
-                    </div>
-
-
-                    <div class="product-info">
-
-                        <small>
-                            LIP GLOSS
-                        </small>
-
-                        <h3>
-                            Pink Lip Gloss
-                        </h3>
-
-                        <p class="price">
-                            UGX 10,000
-                        </p>
-
-                        <a
-                            href="{{ url_for('product', product_id=3) }}"
-                            class="product-button"
-                        >
-                            View Product
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- PRODUCT 4 -->
-
-            <div class="col-md-6 col-lg-3">
-
-                <div class="product-card">
-
-                    <div class="product-image">
-
-                        <span class="product-badge">
-                            New
-                        </span>
-
-                        <img
-                            src="{{ url_for('static', filename='images/makeup.jpg') }}"
-                            alt="Makeup Kit"
-                        >
-
-                    </div>
-
-
-                    <div class="product-info">
-
-                        <small>
-                            MAKEUP
-                        </small>
-
-                        <h3>
-                            Makeup Kit
-                        </h3>
-
-                        <p class="price">
-                            UGX 45,000
-                        </p>
-
-                        <a
-                            href="{{ url_for('product', product_id=5) }}"
-                            class="product-button"
-                        >
-                            View Product
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
+        {% endif %}
 
 
         <div class="center-button">
@@ -632,6 +547,8 @@ Home | Charry Scents
         <div class="row g-4">
 
 
+            <!-- AUTHENTIC PRODUCTS -->
+
             <div class="col-md-6 col-lg-3">
 
                 <div class="why-card">
@@ -652,6 +569,8 @@ Home | Charry Scents
             </div>
 
 
+
+            <!-- AFFORDABLE PRICES -->
 
             <div class="col-md-6 col-lg-3">
 
@@ -674,6 +593,8 @@ Home | Charry Scents
 
 
 
+            <!-- WHOLESALE & RETAIL -->
+
             <div class="col-md-6 col-lg-3">
 
                 <div class="why-card">
@@ -694,6 +615,8 @@ Home | Charry Scents
             </div>
 
 
+
+            <!-- FAST DELIVERY -->
 
             <div class="col-md-6 col-lg-3">
 
@@ -910,7 +833,6 @@ Home | Charry Scents
             <h2 id="sharePopupTitle">
                 Share Charry Scents
             </h2>
-
 
 
             <p>

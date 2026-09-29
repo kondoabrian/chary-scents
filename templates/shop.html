@@ -7,11 +7,18 @@ Shop | Charry Scents
 
 {% block content %}
 
+
+<!-- =========================================================
+     SHOP PAGE HEADER
+========================================================= -->
+
 <section class="page-header">
 
     <div class="container">
 
-        <p>DISCOVER OUR COLLECTION</p>
+        <p>
+            DISCOVER OUR COLLECTION
+        </p>
 
         <h1>
             Shop Beauty Products
@@ -26,11 +33,19 @@ Shop | Charry Scents
 </section>
 
 
+
+<!-- =========================================================
+     SHOP SECTION
+========================================================= -->
+
 <section class="section">
 
     <div class="container">
 
-        <!-- Search -->
+
+        <!-- =================================================
+             SEARCH
+        ================================================== -->
 
         <div class="shop-toolbar">
 
@@ -42,6 +57,8 @@ Shop | Charry Scents
                     type="text"
                     id="productSearch"
                     placeholder="Search products..."
+                    autocomplete="off"
+                    aria-label="Search products"
                 >
 
             </div>
@@ -49,69 +66,117 @@ Shop | Charry Scents
         </div>
 
 
-        <!-- Categories -->
+
+        <!-- =================================================
+             CATEGORY FILTERS
+        ================================================== -->
 
         <div class="category-filter">
 
+
+            <!-- ALL -->
+
             <button
+                type="button"
                 class="filter-btn active"
                 data-category="all"
+                onclick="filterProducts('all', this)"
             >
                 All
             </button>
 
+
+            <!-- PERFUMES -->
+
             <button
+                type="button"
                 class="filter-btn"
                 data-category="Perfumes"
+                onclick="filterProducts('Perfumes', this)"
             >
                 Perfumes
             </button>
 
+
+            <!-- PERFUME OILS -->
+
             <button
+                type="button"
                 class="filter-btn"
                 data-category="Perfume Oils"
+                onclick="filterProducts('Perfume Oils', this)"
             >
                 Perfume Oils
             </button>
 
+
+            <!-- LIP GLOSS -->
+
             <button
+                type="button"
                 class="filter-btn"
                 data-category="Lip Gloss"
+                onclick="filterProducts('Lip Gloss', this)"
             >
                 Lip Gloss
             </button>
 
+
+            <!-- LIPSTICKS -->
+
             <button
+                type="button"
                 class="filter-btn"
                 data-category="Lipsticks"
+                onclick="filterProducts('Lipsticks', this)"
             >
                 Lipsticks
             </button>
 
+
+            <!-- MAKEUP -->
+
             <button
+                type="button"
                 class="filter-btn"
                 data-category="Makeup"
+                onclick="filterProducts('Makeup', this)"
             >
                 Makeup
             </button>
 
+
+            <!-- SKINCARE -->
+
             <button
+                type="button"
                 class="filter-btn"
                 data-category="Skincare"
+                onclick="filterProducts('Skincare', this)"
             >
                 Skincare
             </button>
 
+
+            <!-- GIFT SETS -->
+
             <button
+                type="button"
                 class="filter-btn"
                 data-category="Gift Sets"
+                onclick="filterProducts('Gift Sets', this)"
             >
                 Gift Sets
             </button>
 
+
+            <!-- ACCESSORIES -->
+
             <button
+                type="button"
                 class="filter-btn"
                 data-category="Accessories"
+                onclick="filterProducts('Accessories', this)"
             >
                 Accessories
             </button>
@@ -119,72 +184,194 @@ Shop | Charry Scents
         </div>
 
 
-        <!-- Products -->
 
-        <div class="row g-4" id="productGrid">
+        <!-- =================================================
+             PRODUCTS
+        ================================================== -->
 
-            {% for product in products %}
+        <div
+            class="row g-4"
+            id="productGrid"
+        >
 
-            <div
-                class="col-sm-6 col-lg-3 product-item"
-                data-category="{{ product.category }}"
-            >
 
-                <div class="product-card">
+            {% if products %}
 
-                    <div class="product-image">
 
-                        <img
-                            src="{{ url_for(
-                                'static',
-                                filename='images/' + product.image
-                            ) }}"
-                            alt="{{ product.name }}"
+                {% for product in products %}
+
+
+                    <div
+                        class="col-sm-6 col-md-6 col-lg-3 product-item"
+                    >
+
+
+                        <div
+                            class="product-card"
+                            data-category="{{ product.category }}"
                         >
+
+
+                            <!-- =============================
+                                 PRODUCT IMAGE
+                            ============================== -->
+
+                            <div class="product-image">
+
+                                <img
+                                    src="{{ url_for(
+                                        'static',
+                                        filename='images/' ~ product.image
+                                    ) }}"
+                                    alt="{{ product.name }}"
+                                    loading="lazy"
+                                >
+
+                            </div>
+
+
+
+                            <!-- =============================
+                                 PRODUCT INFORMATION
+                            ============================== -->
+
+                            <div class="product-info">
+
+
+                                <!-- CATEGORY -->
+
+                                <small>
+                                    {{ product.category }}
+                                </small>
+
+
+
+                                <!-- PRODUCT NAME -->
+
+                                <h3>
+                                    {{ product.name }}
+                                </h3>
+
+
+
+                                <!-- PRODUCT DESCRIPTION -->
+
+                                <p class="product-description">
+                                    {{ product.description }}
+                                </p>
+
+
+
+                                <!-- PRICE -->
+
+                                <p class="price">
+
+                                    UGX
+                                    {{ "{:,.0f}".format(product.price) }}
+
+                                </p>
+
+
+
+                                <!-- =========================
+                                     VIEW PRODUCT
+                                ========================== -->
+
+                                <a
+                                    href="{{ url_for(
+                                        'product',
+                                        product_id=product.id
+                                    ) }}"
+                                    class="product-button"
+                                >
+                                    View Product
+                                </a>
+
+
+                            </div>
+
+                        </div>
 
                     </div>
 
 
-                    <div class="product-info">
+                {% endfor %}
 
-                        <small>
-                            {{ product.category }}
-                        </small>
+
+            {% else %}
+
+
+                <!-- =========================================
+                     DATABASE HAS NO PRODUCTS
+                ========================================== -->
+
+                <div class="col-12">
+
+                    <div class="contact-form text-center">
 
                         <h3>
-                            {{ product.name }}
+                            No Products Available
                         </h3>
 
-                        <p class="product-description">
-                            {{ product.description }}
+                        <p>
+                            New Charry Scents products will appear here.
                         </p>
-
-                        <p class="price">
-                            UGX {{ "{:,}".format(product.price) }}
-                        </p>
-
-                        <a
-                            href="{{ url_for(
-                                'product',
-                                product_id=product.id
-                            ) }}"
-                            class="product-button"
-                        >
-                            View Product
-                        </a>
 
                     </div>
 
                 </div>
 
-            </div>
 
-            {% endfor %}
+            {% endif %}
+
 
         </div>
+
+
+
+        <!-- =================================================
+             SEARCH / FILTER FOUND NOTHING
+        ================================================== -->
+
+        {% if products %}
+
+            <div
+                id="noProductsMessage"
+                class="text-center mt-5"
+                style="display: none;"
+            >
+
+                <i
+                    class="bi bi-search"
+                    style="font-size: 2rem;"
+                ></i>
+
+                <h4 class="mt-3">
+                    No Products Found
+                </h4>
+
+                <p>
+                    We couldn't find a product matching your search.
+                    Try another product name or choose another category.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-main mt-2"
+                    onclick="clearProductSearch()"
+                >
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    Show All Products
+                </button>
+
+            </div>
+
+        {% endif %}
+
 
     </div>
 
 </section>
+
 
 {% endblock %}

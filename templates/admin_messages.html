@@ -7,25 +7,54 @@ Messages | Charry Scents
 
 {% block content %}
 
+<!-- =========================================================
+     ADMIN MESSAGES PAGE HEADER
+========================================================= -->
+
 <section class="page-header">
 
     <div class="container">
 
-        <a
-            href="{{ url_for('admin_logout') }}"
-            class="btn btn-main mb-4"
-        >
-            <i class="bi bi-box-arrow-right"></i>
-            Logout
-        </a>
+
+        <!-- =================================================
+             ADMIN NAVIGATION BUTTONS
+        ================================================== -->
+
+        <div class="d-flex gap-2 flex-wrap mb-4">
+
+            <!-- MANAGE PRODUCTS -->
+
+            <a
+                href="{{ url_for('admin_products') }}"
+                class="btn btn-main"
+            >
+                <i class="bi bi-box-seam"></i>
+                Manage Products
+            </a>
+
+
+            <!-- LOGOUT -->
+
+            <a
+                href="{{ url_for('admin_logout') }}"
+                class="btn btn-main"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </a>
+
+        </div>
+
 
         <p>
             Charry Scents ADMIN
         </p>
 
+
         <h1>
             Customer Messages
         </h1>
+
 
         <span>
             View messages sent by your customers.
@@ -36,15 +65,27 @@ Messages | Charry Scents
 </section>
 
 
+<!-- =========================================================
+     CUSTOMER MESSAGES
+========================================================= -->
+
 <section class="section">
 
     <div class="container">
 
+
         {% if messages %}
+
 
             {% for message in messages %}
 
+
+                <!-- =================================================
+                     MESSAGE CARD
+                ================================================== -->
+
                 <div class="contact-form mb-4">
+
 
                     <!-- =========================
                          MESSAGE HEADER
@@ -52,11 +93,13 @@ Messages | Charry Scents
 
                     <div class="d-flex justify-content-between align-items-center">
 
+
                         <div>
 
                             <h3>
                                 {{ message.name }}
                             </h3>
+
 
                             <small>
                                 {{ message.created_at }}
@@ -64,9 +107,11 @@ Messages | Charry Scents
 
                         </div>
 
+
                         <span class="badge bg-secondary">
                             {{ message.status }}
                         </span>
+
 
                     </div>
 
@@ -79,8 +124,13 @@ Messages | Charry Scents
                     ========================== -->
 
                     <p>
-                        <strong>Phone:</strong>
+
+                        <strong>
+                            Phone:
+                        </strong>
+
                         {{ message.phone }}
+
                     </p>
 
 
@@ -91,8 +141,13 @@ Messages | Charry Scents
                     {% if message.email %}
 
                         <p>
-                            <strong>Email:</strong>
+
+                            <strong>
+                                Email:
+                            </strong>
+
                             {{ message.email }}
+
                         </p>
 
                     {% endif %}
@@ -103,22 +158,29 @@ Messages | Charry Scents
                     ========================== -->
 
                     <p>
-                        <strong>Message:</strong>
+
+                        <strong>
+                            Message:
+                        </strong>
+
                     </p>
+
 
                     <p>
                         {{ message.message }}
                     </p>
 
 
-                    <!-- =========================
+                    <!-- =================================================
                          REPLY BUTTONS
-                    ========================== -->
+                    ================================================== -->
 
                     <div class="mt-3 d-flex gap-2 flex-wrap">
 
 
-                        <!-- WHATSAPP -->
+                        <!-- =========================
+                             WHATSAPP
+                        ========================== -->
 
                         <a
                             href="https://wa.me/{{ message.phone | whatsapp_number }}?text={{ ('Hello ' ~ message.name ~ ', thank you for contacting Charry Scents.') | urlencode }}"
@@ -126,12 +188,17 @@ Messages | Charry Scents
                             rel="noopener noreferrer"
                             class="btn btn-main"
                         >
+
                             <i class="bi bi-whatsapp"></i>
+
                             Reply on WhatsApp
+
                         </a>
 
 
-                        <!-- EMAIL -->
+                        <!-- =========================
+                             EMAIL
+                        ========================== -->
 
                         {% if message.email %}
 
@@ -139,8 +206,11 @@ Messages | Charry Scents
                                 href="mailto:{{ message.email }}?subject={{ 'Reply from Charry Scents' | urlencode }}&body={{ ('Hello ' ~ message.name ~ ',%0D%0A%0D%0AThank you for contacting Charry Scents.%0D%0A%0D%0A') | safe }}"
                                 class="btn email-reply-btn"
                             >
+
                                 <i class="bi bi-envelope-fill"></i>
+
                                 Reply by Email
+
                             </a>
 
                         {% endif %}
@@ -148,29 +218,42 @@ Messages | Charry Scents
 
                     </div>
 
+
                 </div>
+
 
             {% endfor %}
 
 
         {% else %}
 
+
+            <!-- =================================================
+                 NO MESSAGES
+            ================================================== -->
+
             <div class="contact-form text-center">
+
 
                 <h3>
                     No Messages Yet
                 </h3>
 
+
                 <p>
                     Customer messages will appear here.
                 </p>
 
+
             </div>
 
+
         {% endif %}
+
 
     </div>
 
 </section>
+
 
 {% endblock %}

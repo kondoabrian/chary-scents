@@ -1,0 +1,391 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit {{ product.name }} | Charry Scents
+{% endblock %}
+
+{% block content %}
+
+
+<!-- =========================================================
+     PAGE HEADER
+========================================================= -->
+
+<section class="page-header">
+
+    <div class="container">
+
+        <p>
+            CHARRY SCENTS ADMIN
+        </p>
+
+        <h1>
+            Edit Product
+        </h1>
+
+        <span>
+            Update product information or replace its image.
+        </span>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     EDIT PRODUCT
+========================================================= -->
+
+<section class="section">
+
+    <div class="container">
+
+
+        <!-- =================================================
+             BACK BUTTON
+        ================================================== -->
+
+        <div class="mb-4">
+
+            <a
+                href="{{ url_for('admin_products') }}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Back to Manage Products
+            </a>
+
+        </div>
+
+
+
+        <!-- =================================================
+             FORM
+        ================================================== -->
+
+        <div class="contact-form">
+
+
+            {% if error %}
+
+                <div class="alert alert-danger">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    {{ error }}
+
+                </div>
+
+            {% endif %}
+
+
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'admin_edit_product',
+                    product_id=product.id
+                ) }}"
+                enctype="multipart/form-data"
+            >
+
+
+                <!-- =========================================
+                     PRODUCT NAME
+                ========================================== -->
+
+                <div class="mb-3">
+
+                    <label
+                        for="name"
+                        class="form-label"
+                    >
+                        Product Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-control"
+                        value="{{ product.name }}"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- =========================================
+                     CATEGORY
+                ========================================== -->
+
+                <div class="mb-3">
+
+                    <label
+                        for="category"
+                        class="form-label"
+                    >
+                        Category
+                    </label>
+
+
+                    <select
+                        id="category"
+                        name="category"
+                        class="form-control"
+                        required
+                    >
+
+
+                        <option
+                            value="Perfumes"
+                            {% if product.category =="Perfumes" %}
+                                selected
+                            {% endif %}
+                        >
+                            Perfumes
+                        </option>
+
+
+                        <option
+                            value="Perfume Oils"
+                            {% if product.category =="Perfume-Oils" %}
+                                selected
+                            {% endif %}
+                        >
+                            Perfume Oils
+                        </option>
+
+
+                        <option
+                            value="Lip Gloss"
+                            {% if product.category =="LipGloss" %}
+                                selected
+                            {% endif %}
+                        >
+                            Lip Gloss
+                        </option>
+
+
+                        <option
+                            value="Lipsticks"
+                            {% if product.category =="Lipsticks" %}
+                                selected
+                            {% endif %}
+                        >
+                            Lipsticks
+                        </option>
+
+
+                        <option
+                            value="Makeup"
+                            {% if product.category =="Makeup" %}
+                                selected
+                            {% endif %}
+                        >
+                            Makeup
+                        </option>
+
+
+                        <option
+                            value="Skincare"
+                            {% if product.category =="Skincare" %}
+                                selected
+                            {% endif %}
+                        >
+                            Skincare
+                        </option>
+
+
+                        <option
+                            value="Gift Sets"
+                            {% if product.category =="GiftSets" %}
+                                selected
+                            {% endif %}
+                        >
+                            Gift Sets
+                        </option>
+
+
+                        <option
+                            value="Accessories"
+                            {% if product.category =="Accessories" %}
+                                selected
+                            {% endif %}
+                        >
+                            Accessories
+                        </option>
+
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- =========================================
+                     PRICE
+                ========================================== -->
+
+                <div class="mb-3">
+
+                    <label
+                        for="price"
+                        class="form-label"
+                    >
+                        Price (UGX)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="price"
+                        name="price"
+                        class="form-control"
+                        value="{{ '{:.0f}'.format(product.price) }}"
+                        min="0"
+                        step="1"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- =========================================
+                     DESCRIPTION
+                ========================================== -->
+
+                <div class="mb-4">
+
+                    <label
+                        for="description"
+                        class="form-label"
+                    >
+                        Product Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        class="form-control"
+                        rows="5"
+                        required
+                    >{{ product.description }}</textarea>
+
+                </div>
+
+
+
+                <!-- =========================================
+                     CURRENT IMAGE
+                ========================================== -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Current Product Image
+                    </label>
+
+                    <div class="mt-2">
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='images/' ~ product.image
+                            ) }}"
+                            alt="{{ product.name }}"
+                            class="img-fluid rounded"
+                            style="max-width: 250px;"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =========================================
+                     NEW IMAGE
+                ========================================== -->
+
+                <div class="mb-4">
+
+                    <label
+                        for="image"
+                        class="form-label"
+                    >
+                        Replace Product Image
+                    </label>
+
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        class="form-control"
+                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                    >
+
+                    <small class="text-muted">
+
+                        Leave this empty if you want to keep
+                        the current product image.
+
+                    </small>
+
+                </div>
+
+
+
+                <!-- =========================================
+                     ACTION BUTTONS
+                ========================================== -->
+
+                <div class="d-flex gap-2 flex-wrap">
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-main"
+                    >
+                        <i class="bi bi-check-circle"></i>
+                        Save Changes
+                    </button>
+
+
+                    <a
+                        href="{{ url_for('admin_products') }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <a
+                        href="{{ url_for(
+                            'product',
+                            product_id=product.id
+                        ) }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        <i class="bi bi-eye"></i>
+                        View Product
+                    </a>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+{% endblock %}
