@@ -2448,3 +2448,156 @@ img {
     }
 
 }
+/* =========================================================
+   ADMIN CUSTOMER MESSAGE
+========================================================= */
+
+.customer-message-content {
+    margin-top: 20px;
+}
+
+
+/* =========================================================
+   ADMIN MESSAGE REPLY SECTION
+========================================================= */
+
+.message-reply-section {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eeeeee;
+}
+
+
+/* Reply heading */
+
+.reply-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-bottom: 14px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #555555;
+}
+
+
+/* =========================================================
+   REPLY BUTTON CONTAINER
+========================================================= */
+
+.message-reply-buttons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   COMMON REPLY BUTTON
+========================================================= */
+
+.reply-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.reply-btn i {
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   WHATSAPP REPLY BUTTON
+========================================================= */
+
+.whatsapp-reply-btn {
+    background: #25D366;
+
+    color: #ffffff;
+
+    border: 1px solid #25D366;
+}
+
+
+.whatsapp-reply-btn:hover {
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 15px
+        rgba(37, 211, 102, 0.25);
+}
+
+
+/* =========================================================
+   EMAIL REPLY BUTTON
+========================================================= */
+
+.email-reply-btn {
+    background: #ffffff;
+
+    color: #333333;
+
+    border: 1px solid #dddddd;
+}
+
+
+.email-reply-btn:hover {
+    background: #f7f7f7;
+
+    color: #111111;
+
+    border-color: #cccccc;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 15px
+        rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
+   MOBILE ADMIN MESSAGES
+========================================================= */
+
+@media (max-width: 576px) {
+
+    .message-reply-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+
+    .reply-btn {
+        width: 100%;
+    }
+
+}
