@@ -7,9 +7,15 @@ Messages | Charry Scents
 
 {% block content %}
 
+<!-- =========================================================
+     ADMIN MESSAGES PAGE HEADER
+========================================================= -->
+
 <section class="page-header">
 
     <div class="container">
+
+        <!-- Logout Button -->
 
         <a
             href="{{ url_for('admin_logout') }}"
@@ -19,22 +25,30 @@ Messages | Charry Scents
             Logout
         </a>
 
+
         <p>
             Charry Scents ADMIN
         </p>
+
 
         <h1>
             Customer Messages
         </h1>
 
+
         <span>
-            View messages sent by your customers.
+            View messages sent by your customers and reply
+            through WhatsApp or Email.
         </span>
 
     </div>
 
 </section>
 
+
+<!-- =========================================================
+     CUSTOMER MESSAGES
+========================================================= -->
 
 <section class="section">
 
@@ -44,7 +58,12 @@ Messages | Charry Scents
 
             {% for message in messages %}
 
+                <!-- =================================================
+                     MESSAGE CARD
+                ================================================== -->
+
                 <div class="contact-form mb-4">
+
 
                     <!-- =========================
                          MESSAGE HEADER
@@ -64,6 +83,7 @@ Messages | Charry Scents
 
                         </div>
 
+
                         <span class="badge bg-secondary">
                             {{ message.status }}
                         </span>
@@ -79,8 +99,14 @@ Messages | Charry Scents
                     ========================== -->
 
                     <p>
-                        <strong>Phone:</strong>
+
+                        <strong>
+                            <i class="bi bi-telephone"></i>
+                            Phone:
+                        </strong>
+
                         {{ message.phone }}
+
                     </p>
 
 
@@ -91,8 +117,14 @@ Messages | Charry Scents
                     {% if message.email %}
 
                         <p>
-                            <strong>Email:</strong>
+
+                            <strong>
+                                <i class="bi bi-envelope"></i>
+                                Email:
+                            </strong>
+
                             {{ message.email }}
+
                         </p>
 
                     {% endif %}
@@ -102,45 +134,86 @@ Messages | Charry Scents
                          CUSTOMER MESSAGE
                     ========================== -->
 
-                    <p>
-                        <strong>Message:</strong>
-                    </p>
+                    <div class="customer-message-content">
 
-                    <p>
-                        {{ message.message }}
-                    </p>
+                        <p>
+                            <strong>
+                                <i class="bi bi-chat-left-text"></i>
+                                Message:
+                            </strong>
+                        </p>
 
-
-                    <!-- =========================
-                         REPLY BUTTONS
-                    ========================== -->
-
-                    <div class="mt-3 d-flex gap-2 flex-wrap">
-
-                        <a
-                            href="https://wa.me/{{ message.phone | whatsapp_number }}?text={{ ('Hello ' ~ message.name ~ ', thank you for contacting Charry Scents.') | urlencode }}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="btn btn-main"
-                        >
-                            <i class="bi bi-whatsapp"></i>
-                            Reply on WhatsApp
-                        </a>
-
-
-                        {% if message.email %}
-
-                            <a
-                                href="mailto:{{ message.email }}"
-                                class="btn btn-outline-dark"
-                            >
-                                <i class="bi bi-envelope"></i>
-                                Reply by Email
-                            </a>
-
-                        {% endif %}
+                        <p>
+                            {{ message.message }}
+                        </p>
 
                     </div>
+
+
+                    <!-- =================================================
+                         REPLY SECTION
+                    ================================================== -->
+
+                    <div class="message-reply-section">
+
+                        <p class="reply-title">
+
+                            <i class="bi bi-reply"></i>
+
+                            Reply to Customer
+
+                        </p>
+
+
+                        <div class="message-reply-buttons">
+
+
+                            <!-- =========================
+                                 WHATSAPP REPLY
+                            ========================== -->
+
+                            <a
+                                href="https://wa.me/{{ message.phone | whatsapp_number }}?text={{ ('Hello ' ~ message.name ~ ', thank you for contacting Charry Scents.') | urlencode }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="reply-btn whatsapp-reply-btn"
+                            >
+
+                                <i class="bi bi-whatsapp"></i>
+
+                                <span>
+                                    Reply on WhatsApp
+                                </span>
+
+                            </a>
+
+
+                            <!-- =========================
+                                 EMAIL REPLY
+                            ========================== -->
+
+                            {% if message.email %}
+
+                                <a
+                                    href="mailto:{{ message.email }}?subject={{ 'Reply from Charry Scents' | urlencode }}&body={{ ('Hello ' ~ message.name ~ ',%0D%0A%0D%0AThank you for contacting Charry Scents.%0D%0A%0D%0A') | safe }}"
+                                    class="reply-btn email-reply-btn"
+                                >
+
+                                    <i class="bi bi-envelope-fill"></i>
+
+                                    <span>
+                                        Reply by Email
+                                    </span>
+
+                                </a>
+
+                            {% endif %}
+
+
+                        </div>
+
+                    </div>
+
 
                 </div>
 
@@ -149,22 +222,41 @@ Messages | Charry Scents
 
         {% else %}
 
+
+            <!-- =================================================
+                 NO MESSAGES
+            ================================================== -->
+
             <div class="contact-form text-center">
+
+                <div class="mb-3">
+
+                    <i
+                        class="bi bi-inbox"
+                        style="font-size: 40px;"
+                    ></i>
+
+                </div>
+
 
                 <h3>
                     No Messages Yet
                 </h3>
 
+
                 <p>
-                    Customer messages will appear here.
+                    Customer messages will appear here
+                    when someone contacts Charry Scents.
                 </p>
 
             </div>
+
 
         {% endif %}
 
     </div>
 
 </section>
+
 
 {% endblock %}
