@@ -3,24 +3,13 @@ import os
 from flask import Flask, render_template, request, session, redirect, url_for
 import mysql.connector
 from werkzeug.security import check_password_hash
-
-
 app = Flask(__name__)
-
-# --------------------------------------------------
-# FLASK SECRET KEY
-# --------------------------------------------------
-
+#flask key
 app.secret_key = os.getenv(
     "SECRET_KEY",
     "local-development-secret-key"
 )
-
-
-# --------------------------------------------------
-# DATABASE CONNECTION
-# --------------------------------------------------
-
+#database connection to mysql
 def get_db_connection():
 
     db_host = os.getenv("DB_HOST", "localhost")
@@ -45,11 +34,7 @@ def get_db_connection():
 
     return mysql.connector.connect(**connection_settings)
 
-
-# --------------------------------------------------
-# PRODUCT DATA
-# --------------------------------------------------
-
+#products information
 products = [
 
     {
@@ -126,11 +111,7 @@ products = [
 
 ]
 
-
-# --------------------------------------------------
-# HOME
-# --------------------------------------------------
-
+#home
 @app.route("/")
 def home():
 
@@ -139,7 +120,6 @@ def home():
 
 
 # SHOP
-
 @app.route("/shop")
 def shop():
 
@@ -148,9 +128,7 @@ def shop():
         products=products
     )
 
-# PRODUCT DETAILS
-
-
+#product details
 @app.route("/product/<int:product_id>")
 def product(product_id):
 
@@ -173,14 +151,13 @@ def product(product_id):
         product=selected_product
     )
 
-# ABOUT
-
+#about
 @app.route("/about")
 def about():
 
     return render_template("about.html")
 
-# CONTACT
+#contact
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
 
@@ -225,7 +202,7 @@ def contact():
     )
 
 
-# ADMIN LOGIN
+#admin login
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
 
@@ -274,7 +251,7 @@ def admin_login():
 
     return render_template("admin_login.html")
 
-# ADMIN MESSAGES
+# admin messages
 
 @app.route("/admin/messages")
 def admin_messages():
@@ -308,12 +285,7 @@ def admin_messages():
         "admin_messages.html",
         messages=messages
     )
-
-
-# --------------------------------------------------
-# ADMIN LOGOUT
-# --------------------------------------------------
-
+# admin logout
 @app.route("/admin/logout")
 def admin_logout():
 
@@ -336,10 +308,6 @@ def admin_logout():
         url_for("admin_login")
     )
 
-
-# --------------------------------------------------
-# RUN APPLICATION
-# --------------------------------------------------
 
 if __name__ == "__main__":
 

@@ -1,12 +1,6 @@
-// =========================================================
-// Charry Scents - WEBSITE JAVASCRIPT
-// =========================================================
+//appling javascript to my website for my beautifull customers
 
-
-
-// =========================================================
-// PRODUCT SEARCH
-// =========================================================
+// you can search products my customers
 
 function searchProducts() {
 
@@ -71,13 +65,6 @@ function searchProducts() {
     );
 
 }
-
-
-
-// =========================================================
-// CATEGORY FILTER
-// =========================================================
-
 function filterProducts(
     category,
     clickedButton
@@ -156,13 +143,6 @@ function filterProducts(
     );
 
 }
-
-
-
-// =========================================================
-// QUANTITY
-// =========================================================
-
 function increaseQuantity() {
 
     const quantityElement =
@@ -198,8 +178,6 @@ function increaseQuantity() {
         quantity;
 
 }
-
-
 
 function decreaseQuantity() {
 
@@ -241,12 +219,6 @@ function decreaseQuantity() {
 
 }
 
-
-
-// =========================================================
-// ADD TO CART
-// =========================================================
-
 function addToCart(
     productName
 ) {
@@ -257,12 +229,6 @@ function addToCart(
     );
 
 }
-
-
-
-// =========================================================
-// DEMO PACKAGE / PRODUCT SELECTION
-// =========================================================
 
 function selectPackage(
     packageName
@@ -275,13 +241,7 @@ function selectPackage(
     );
 
 }
-
-
-
-// =========================================================
-// GET WEBSITE URL
-// =========================================================
-
+//get website
 function getWebsiteUrl() {
 
     return (
@@ -290,13 +250,7 @@ function getWebsiteUrl() {
     );
 
 }
-
-
-
-// =========================================================
-// COPY WEBSITE LINK
-// =========================================================
-
+//coping website link
 function copyWebsiteLink() {
 
     const websiteUrl =
@@ -342,13 +296,7 @@ function copyWebsiteLink() {
     }
 
 }
-
-
-
-// =========================================================
-// COPY FALLBACK
-// =========================================================
-
+//coping fallback
 function copyUsingFallback(
     websiteUrl
 ) {
@@ -425,12 +373,6 @@ function copyUsingFallback(
 
 }
 
-
-
-// =========================================================
-// SHOW COPY MESSAGE
-// =========================================================
-
 function showCopyMessage(
     message
 ) {
@@ -463,13 +405,7 @@ function showCopyMessage(
     );
 
 }
-
-
-
-// =========================================================
-// OPEN SHARE POPUP
-// =========================================================
-
+//opening share popup
 function openSharePopup() {
 
     const popup =
@@ -504,13 +440,7 @@ function openSharePopup() {
         encodeURIComponent(
             shareText
         );
-
-
-
-    // =========================================
-    // WHATSAPP
-    // =========================================
-
+    //watsap my customers
     const whatsapp =
         document.getElementById(
             "shareWhatsApp"
@@ -526,12 +456,7 @@ function openSharePopup() {
             encodedUrl;
 
     }
-
-
-
-    // =========================================
-    // FACEBOOK
-    // =========================================
+    //facebook my customers
 
     const facebook =
         document.getElementById(
@@ -546,13 +471,7 @@ function openSharePopup() {
             encodedUrl;
 
     }
-
-
-
-    // =========================================
-    // X / TWITTER
-    // =========================================
-
+    //twitter
     const twitter =
         document.getElementById(
             "shareTwitter"
@@ -569,11 +488,7 @@ function openSharePopup() {
 
     }
 
-
-
-    // =========================================
-    // TELEGRAM
-    // =========================================
+    //telegram
 
     const telegram =
         document.getElementById(
@@ -590,12 +505,6 @@ function openSharePopup() {
             encodedText;
 
     }
-
-
-
-    // =========================================
-    // EMAIL
-    // =========================================
 
     const email =
         document.getElementById(
@@ -616,12 +525,7 @@ function openSharePopup() {
             encodedUrl;
 
     }
-
-
-
-    // =========================================
-    // SHOW POPUP
-    // =========================================
+    //showing popup
 
     popup.classList.add(
         "active"
@@ -633,21 +537,11 @@ function openSharePopup() {
         "false"
     );
 
-
-    // Stop page from scrolling
-    // while popup is open
-
     document.body.style.overflow =
         "hidden";
 
 }
-
-
-
-// =========================================================
-// CLOSE SHARE POPUP
-// =========================================================
-
+//closing from share popup
 function closeSharePopup() {
 
     const popup =
@@ -679,12 +573,7 @@ function closeSharePopup() {
 
 }
 
-
-
-// =========================================================
-// COPY FROM SHARE POPUP
-// =========================================================
-
+// coping from share popup
 function copyFromSharePopup() {
 
     const websiteUrl =
@@ -730,13 +619,7 @@ function copyFromSharePopup() {
     }
 
 }
-
-
-
-// =========================================================
 // COPY POPUP FALLBACK
-// =========================================================
-
 function copyPopupUsingFallback(
     websiteUrl
 ) {
@@ -811,12 +694,7 @@ function copyPopupUsingFallback(
 
 }
 
-
-
-// =========================================================
-// SHOW POPUP MESSAGE
-// =========================================================
-
+//showing popup message
 function showSharePopupMessage(
     message
 ) {
@@ -850,12 +728,7 @@ function showSharePopupMessage(
 
 }
 
-
-
-// =========================================================
-// CLOSE POPUP WITH ESC KEY
-// =========================================================
-
+// close popup with esc key
 document.addEventListener(
     "keydown",
     function(event) {
