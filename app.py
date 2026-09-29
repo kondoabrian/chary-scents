@@ -30,7 +30,7 @@ def get_db_connection():
         "port": int(os.getenv("DB_PORT", "3306")),
         "user": os.getenv("DB_USER", "root"),
         "password": os.getenv("DB_PASSWORD", ""),
-        "database": os.getenv("DB_NAME", "chary_scents")
+        "database": os.getenv("DB_NAME", "Charry_scents")
     }
 
     # When running on Render/Aiven, use SSL
@@ -137,9 +137,8 @@ def home():
     return render_template("home.html")
 
 
-# --------------------------------------------------
+
 # SHOP
-# --------------------------------------------------
 
 @app.route("/shop")
 def shop():
@@ -149,10 +148,8 @@ def shop():
         products=products
     )
 
-
-# --------------------------------------------------
 # PRODUCT DETAILS
-# --------------------------------------------------
+
 
 @app.route("/product/<int:product_id>")
 def product(product_id):
@@ -176,21 +173,14 @@ def product(product_id):
         product=selected_product
     )
 
-
-# --------------------------------------------------
 # ABOUT
-# --------------------------------------------------
 
 @app.route("/about")
 def about():
 
     return render_template("about.html")
 
-
-# --------------------------------------------------
 # CONTACT
-# --------------------------------------------------
-
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
 
@@ -235,10 +225,7 @@ def contact():
     )
 
 
-# --------------------------------------------------
 # ADMIN LOGIN
-# --------------------------------------------------
-
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
 
@@ -287,10 +274,7 @@ def admin_login():
 
     return render_template("admin_login.html")
 
-
-# --------------------------------------------------
 # ADMIN MESSAGES
-# --------------------------------------------------
 
 @app.route("/admin/messages")
 def admin_messages():

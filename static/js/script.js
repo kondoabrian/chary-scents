@@ -1,5 +1,5 @@
 // =========================================================
-// CHARY SCENTS - WEBSITE JAVASCRIPT
+// Charry Scents - WEBSITE JAVASCRIPT
 // =========================================================
 
 
@@ -496,7 +496,7 @@ function openSharePopup() {
 
 
     const shareText =
-        "Check out Chary Scents - " +
+        "Check out Charry Scents - " +
         "Your Beauty, Our Passion.";
 
 
@@ -608,7 +608,7 @@ function openSharePopup() {
         email.href =
             "mailto:?subject=" +
             encodeURIComponent(
-                "Check out Chary Scents"
+                "Check out Charry Scents"
             ) +
             "&body=" +
             encodedText +
