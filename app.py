@@ -3,26 +3,60 @@ import os
 from flask import Flask, render_template, request, session, redirect, url_for
 import mysql.connector
 from werkzeug.security import check_password_hash
+
+
+# =========================================================
+# FLASK APPLICATION
+# =========================================================
+
 app = Flask(__name__)
-#flask key
+
+
+# =========================================================
+# FLASK SECRET KEY
+# =========================================================
+
 app.secret_key = os.getenv(
     "SECRET_KEY",
     "local-development-secret-key"
 )
-#database connection to mysql
+
+
+# =========================================================
+# DATABASE CONNECTION
+# =========================================================
+
 def get_db_connection():
 
-    db_host = os.getenv("DB_HOST", "localhost")
+    db_host = os.getenv(
+        "DB_HOST",
+        "localhost"
+    )
 
     connection_settings = {
         "host": db_host,
-        "port": int(os.getenv("DB_PORT", "3306")),
-        "user": os.getenv("DB_USER", "root"),
-        "password": os.getenv("DB_PASSWORD", ""),
-        "database": os.getenv("DB_NAME", "Charry_scents")
+        "port": int(
+            os.getenv(
+                "DB_PORT",
+                "3306"
+            )
+        ),
+        "user": os.getenv(
+            "DB_USER",
+            "root"
+        ),
+        "password": os.getenv(
+            "DB_PASSWORD",
+            ""
+        ),
+        "database": os.getenv(
+            "DB_NAME",
+            "chary_scents"
+        )
     }
 
-    # When running on Render/Aiven, use SSL
+    # When the website is running online on Render,
+    # connect securely to Aiven using SSL.
     if db_host != "localhost":
 
         connection_settings["ssl_ca"] = os.getenv(
@@ -32,9 +66,69 @@ def get_db_connection():
 
         connection_settings["ssl_verify_cert"] = True
 
-    return mysql.connector.connect(**connection_settings)
+    return mysql.connector.connect(
+        **connection_settings
+    )
 
-#products information
+
+# =========================================================
+# WHATSAPP PHONE NUMBER FORMATTER
+# =========================================================
+
+def format_whatsapp_number(phone):
+
+    if not phone:
+        return ""
+
+    # Convert to string first.
+    phone = str(phone)
+
+    # Keep digits only.
+    #
+    # Examples:
+    # +256 770 460 959 -> 256770460959
+    # 0770-460-959     -> 0770460959
+    phone = "".join(
+        character
+        for character in phone
+        if character.isdigit()
+    )
+
+    # Uganda local format:
+    #
+    # 0770460959
+    # becomes
+    # 256770460959
+    if phone.startswith("0"):
+
+        phone = "256" + phone[1:]
+
+    # If the customer enters:
+    #
+    # 770460959
+    #
+    # automatically add Uganda country code.
+    elif len(phone) == 9:
+
+        phone = "256" + phone
+
+    return phone
+
+
+# =========================================================
+# JINJA WHATSAPP FILTER
+# =========================================================
+
+@app.template_filter("whatsapp_number")
+def whatsapp_number_filter(phone):
+
+    return format_whatsapp_number(phone)
+
+
+# =========================================================
+# PRODUCTS
+# =========================================================
+
 products = [
 
     {
@@ -43,7 +137,10 @@ products = [
         "category": "Perfumes",
         "price": 35000,
         "image": "perfume.jpg",
-        "description": "A beautiful long-lasting fragrance suitable for everyday use."
+        "description": (
+            "A beautiful long-lasting fragrance "
+            "suitable for everyday use."
+        )
     },
 
     {
@@ -52,7 +149,10 @@ products = [
         "category": "Perfume Oils",
         "price": 15000,
         "image": "perfume_oil.jpg",
-        "description": "Long-lasting fragrance oil with a beautiful scent."
+        "description": (
+            "Long-lasting fragrance oil "
+            "with a beautiful scent."
+        )
     },
 
     {
@@ -61,7 +161,10 @@ products = [
         "category": "Lip Gloss",
         "price": 10000,
         "image": "lip_gloss.jpg",
-        "description": "Smooth and glossy lip finish for everyday beauty."
+        "description": (
+            "Smooth and glossy lip finish "
+            "for everyday beauty."
+        )
     },
 
     {
@@ -70,7 +173,10 @@ products = [
         "category": "Lipsticks",
         "price": 12000,
         "image": "lipstick.jpg",
-        "description": "Beautiful lipstick for a confident look."
+        "description": (
+            "Beautiful lipstick "
+            "for a confident look."
+        )
     },
 
     {
@@ -79,7 +185,10 @@ products = [
         "category": "Makeup",
         "price": 45000,
         "image": "makeup.jpg",
-        "description": "A complete beauty kit for your makeup needs."
+        "description": (
+            "A complete beauty kit "
+            "for your makeup needs."
+        )
     },
 
     {
@@ -88,7 +197,10 @@ products = [
         "category": "Skincare",
         "price": 40000,
         "image": "skincare.jpg",
-        "description": "Beauty and skincare products for your daily routine."
+        "description": (
+            "Beauty and skincare products "
+            "for your daily routine."
+        )
     },
 
     {
@@ -97,7 +209,10 @@ products = [
         "category": "Gift Sets",
         "price": 55000,
         "image": "gift_set.jpg",
-        "description": "A beautiful beauty package perfect for gifting."
+        "description": (
+            "A beautiful beauty package "
+            "perfect for gifting."
+        )
     },
 
     {
@@ -106,20 +221,30 @@ products = [
         "category": "Accessories",
         "price": 20000,
         "image": "accessories.jpg",
-        "description": "Useful and stylish beauty accessories."
+        "description": (
+            "Useful and stylish beauty accessories."
+        )
     }
 
 ]
 
-#home
+
+# =========================================================
+# HOME PAGE
+# =========================================================
+
 @app.route("/")
 def home():
 
-    return render_template("home.html")
+    return render_template(
+        "home.html"
+    )
 
 
+# =========================================================
+# SHOP PAGE
+# =========================================================
 
-# SHOP
 @app.route("/shop")
 def shop():
 
@@ -128,7 +253,11 @@ def shop():
         products=products
     )
 
-#product details
+
+# =========================================================
+# PRODUCT DETAILS
+# =========================================================
+
 @app.route("/product/<int:product_id>")
 def product(product_id):
 
@@ -151,14 +280,27 @@ def product(product_id):
         product=selected_product
     )
 
-#about
+
+# =========================================================
+# ABOUT PAGE
+# =========================================================
+
 @app.route("/about")
 def about():
 
-    return render_template("about.html")
+    return render_template(
+        "about.html"
+    )
 
-#contact
-@app.route("/contact", methods=["GET", "POST"])
+
+# =========================================================
+# CONTACT PAGE
+# =========================================================
+
+@app.route(
+    "/contact",
+    methods=["GET", "POST"]
+)
 def contact():
 
     message_sent = False
@@ -187,11 +329,15 @@ def contact():
             message
         )
 
-        cursor.execute(sql, values)
+        cursor.execute(
+            sql,
+            values
+        )
 
         connection.commit()
 
         cursor.close()
+
         connection.close()
 
         message_sent = True
@@ -202,18 +348,31 @@ def contact():
     )
 
 
-#admin login
-@app.route("/admin/login", methods=["GET", "POST"])
+# =========================================================
+# ADMIN LOGIN
+# =========================================================
+
+@app.route(
+    "/admin/login",
+    methods=["GET", "POST"]
+)
 def admin_login():
 
     if request.method == "POST":
 
-        username = request.form.get("username")
-        password = request.form.get("password")
+        username = request.form.get(
+            "username"
+        )
+
+        password = request.form.get(
+            "password"
+        )
 
         connection = get_db_connection()
 
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(
+            dictionary=True
+        )
 
         cursor.execute(
             """
@@ -227,6 +386,7 @@ def admin_login():
         admin = cursor.fetchone()
 
         cursor.close()
+
         connection.close()
 
         if admin and check_password_hash(
@@ -238,10 +398,14 @@ def admin_login():
 
             session["admin_id"] = admin["id"]
 
-            session["admin_username"] = admin["username"]
+            session["admin_username"] = (
+                admin["username"]
+            )
 
             return redirect(
-                url_for("admin_messages")
+                url_for(
+                    "admin_messages"
+                )
             )
 
         return render_template(
@@ -249,17 +413,28 @@ def admin_login():
             error="Invalid username or password."
         )
 
-    return render_template("admin_login.html")
+    return render_template(
+        "admin_login.html"
+    )
 
-# admin messages
+
+# =========================================================
+# ADMIN MESSAGES
+# =========================================================
 
 @app.route("/admin/messages")
 def admin_messages():
 
-    if not session.get("admin_logged_in"):
+    # Prevent people from opening the admin messages
+    # page without logging in.
+    if not session.get(
+        "admin_logged_in"
+    ):
 
         return redirect(
-            url_for("admin_login")
+            url_for(
+                "admin_login"
+            )
         )
 
     connection = get_db_connection()
@@ -279,13 +454,19 @@ def admin_messages():
     messages = cursor.fetchall()
 
     cursor.close()
+
     connection.close()
 
     return render_template(
         "admin_messages.html",
         messages=messages
     )
-# admin logout
+
+
+# =========================================================
+# ADMIN LOGOUT
+# =========================================================
+
 @app.route("/admin/logout")
 def admin_logout():
 
@@ -305,9 +486,15 @@ def admin_logout():
     )
 
     return redirect(
-        url_for("admin_login")
+        url_for(
+            "admin_login"
+        )
     )
 
+
+# =========================================================
+# RUN FLASK
+# =========================================================
 
 if __name__ == "__main__":
 
