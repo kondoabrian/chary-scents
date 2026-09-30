@@ -7,6 +7,11 @@ Add Product | Charry Scents
 
 {% block content %}
 
+
+<!-- =========================================================
+     PAGE HEADER
+========================================================= -->
+
 <section class="page-header">
 
     <div class="container">
@@ -28,20 +33,39 @@ Add Product | Charry Scents
 </section>
 
 
+
+<!-- =========================================================
+     ADD PRODUCT SECTION
+========================================================= -->
+
 <section class="section">
 
     <div class="container">
 
         <div class="contact-form">
 
+
+            <!-- =================================================
+                 ERROR MESSAGE
+            ================================================== -->
+
             {% if error %}
 
                 <div class="alert alert-danger">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
                     {{ error }}
+
                 </div>
 
             {% endif %}
 
+
+
+            <!-- =================================================
+                 ADD PRODUCT FORM
+            ================================================== -->
 
             <form
                 method="POST"
@@ -50,34 +74,48 @@ Add Product | Charry Scents
             >
 
 
-                <!-- PRODUCT NAME -->
+                <!-- =========================================
+                     PRODUCT NAME
+                ========================================== -->
 
                 <div class="mb-3">
 
-                    <label class="form-label">
+                    <label
+                        for="name"
+                        class="form-label"
+                    >
                         Product Name
                     </label>
 
                     <input
                         type="text"
+                        id="name"
                         name="name"
                         class="form-control"
                         placeholder="Example: Rose Perfume"
+                        value="{{ request.form.get('name', '') }}"
                         required
                     >
 
                 </div>
 
 
-                <!-- CATEGORY -->
+
+                <!-- =========================================
+                     CATEGORY
+                ========================================== -->
 
                 <div class="mb-3">
 
-                    <label class="form-label">
+                    <label
+                        for="category"
+                        class="form-label"
+                    >
                         Category
                     </label>
 
                     <select
+                        id="category"
                         name="category"
                         class="form-control"
                         required
@@ -87,35 +125,83 @@ Add Product | Charry Scents
                             Select Category
                         </option>
 
-                        <option value="Perfumes">
+
+                        <option
+                            value="Perfumes"
+                            {% if request.form.get('category') == 'Perfumes' %}
+                                selected
+                            {% endif %}
+                        >
                             Perfumes
                         </option>
 
-                        <option value="Perfume Oils">
+
+                        <option
+                            value="Perfume Oils"
+                            {% if request.form.get('category') == 'Perfume Oils' %}
+                                selected
+                            {% endif %}
+                        >
                             Perfume Oils
                         </option>
 
-                        <option value="Lip Gloss">
+
+                        <option
+                            value="Lip Gloss"
+                            {% if request.form.get('category') == 'Lip Gloss' %}
+                                selected
+                            {% endif %}
+                        >
                             Lip Gloss
                         </option>
 
-                        <option value="Lipsticks">
+
+                        <option
+                            value="Lipsticks"
+                            {% if request.form.get('category') == 'Lipsticks' %}
+                                selected
+                            {% endif %}
+                        >
                             Lipsticks
                         </option>
 
-                        <option value="Makeup">
+
+                        <option
+                            value="Makeup"
+                            {% if request.form.get('category') == 'Makeup' %}
+                                selected
+                            {% endif %}
+                        >
                             Makeup
                         </option>
 
-                        <option value="Skincare">
+
+                        <option
+                            value="Skincare"
+                            {% if request.form.get('category') == 'Skincare' %}
+                                selected
+                            {% endif %}
+                        >
                             Skincare
                         </option>
 
-                        <option value="Gift Sets">
+
+                        <option
+                            value="Gift Sets"
+                            {% if request.form.get('category') == 'Gift Sets' %}
+                                selected
+                            {% endif %}
+                        >
                             Gift Sets
                         </option>
 
-                        <option value="Accessories">
+
+                        <option
+                            value="Accessories"
+                            {% if request.form.get('category') == 'Accessories' %}
+                                selected
+                            {% endif %}
+                        >
                             Accessories
                         </option>
 
@@ -124,19 +210,27 @@ Add Product | Charry Scents
                 </div>
 
 
-                <!-- PRICE -->
+
+                <!-- =========================================
+                     PRICE
+                ========================================== -->
 
                 <div class="mb-3">
 
-                    <label class="form-label">
+                    <label
+                        for="price"
+                        class="form-label"
+                    >
                         Price (UGX)
                     </label>
 
                     <input
                         type="number"
+                        id="price"
                         name="price"
                         class="form-control"
                         placeholder="Example: 35000"
+                        value="{{ request.form.get('price', '') }}"
                         min="0"
                         step="1"
                         required
@@ -145,35 +239,49 @@ Add Product | Charry Scents
                 </div>
 
 
-                <!-- DESCRIPTION -->
+
+                <!-- =========================================
+                     DESCRIPTION
+                ========================================== -->
 
                 <div class="mb-3">
 
-                    <label class="form-label">
+                    <label
+                        for="description"
+                        class="form-label"
+                    >
                         Product Description
                     </label>
 
                     <textarea
+                        id="description"
                         name="description"
                         class="form-control"
                         rows="5"
                         placeholder="Describe the product..."
                         required
-                    ></textarea>
+                    >{{ request.form.get('description', '') }}</textarea>
 
                 </div>
 
 
-                <!-- PRODUCT IMAGE -->
+
+                <!-- =========================================
+                     PRODUCT IMAGE
+                ========================================== -->
 
                 <div class="mb-4">
 
-                    <label class="form-label">
+                    <label
+                        for="image"
+                        class="form-label"
+                    >
                         Product Image
                     </label>
 
                     <input
                         type="file"
+                        id="image"
                         name="image"
                         class="form-control"
                         accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
@@ -181,41 +289,64 @@ Add Product | Charry Scents
                     >
 
                     <small class="text-muted">
+
                         Choose a JPG, JPEG, PNG or WEBP image.
+                        The image will be stored securely for use
+                        across the Charry Scents website.
+
                     </small>
 
                 </div>
 
 
-                <!-- BUTTONS -->
+
+                <!-- =========================================
+                     ACTION BUTTONS
+                ========================================== -->
 
                 <div class="d-flex gap-2 flex-wrap">
+
+
+                    <!-- ADD PRODUCT -->
 
                     <button
                         type="submit"
                         class="btn btn-main"
                     >
+
                         <i class="bi bi-plus-circle"></i>
+
                         Add Product
+
                     </button>
 
+
+
+                    <!-- CANCEL -->
 
                     <a
                         href="{{ url_for('admin_products') }}"
                         class="btn btn-outline-secondary"
                     >
+
+                        <i class="bi bi-x-circle"></i>
+
                         Cancel
+
                     </a>
+
 
                 </div>
 
 
             </form>
 
+
         </div>
 
     </div>
 
 </section>
+
 
 {% endblock %}

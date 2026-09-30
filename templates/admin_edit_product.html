@@ -67,6 +67,10 @@ Edit {{ product.name }} | Charry Scents
         <div class="contact-form">
 
 
+            <!-- =================================================
+                 ERROR MESSAGE
+            ================================================== -->
+
             {% if error %}
 
                 <div class="alert alert-danger">
@@ -139,15 +143,19 @@ Edit {{ product.name }} | Charry Scents
                     >
 
 
+                        <!-- PERFUMES -->
+
                         <option
                             value="Perfumes"
-                            {% if product.category =="Perfumes" %}
+                            {% if product.category=="Perfumes" %}
                                 selected
                             {% endif %}
                         >
                             Perfumes
                         </option>
 
+
+                        <!-- PERFUME OILS -->
 
                         <option
                             value="Perfume Oils"
@@ -159,6 +167,8 @@ Edit {{ product.name }} | Charry Scents
                         </option>
 
 
+                        <!-- LIP GLOSS -->
+
                         <option
                             value="Lip Gloss"
                             {% if product.category =="LipGloss" %}
@@ -168,6 +178,8 @@ Edit {{ product.name }} | Charry Scents
                             Lip Gloss
                         </option>
 
+
+                        <!-- LIPSTICKS -->
 
                         <option
                             value="Lipsticks"
@@ -179,6 +191,8 @@ Edit {{ product.name }} | Charry Scents
                         </option>
 
 
+                        <!-- MAKEUP -->
+
                         <option
                             value="Makeup"
                             {% if product.category =="Makeup" %}
@@ -188,6 +202,8 @@ Edit {{ product.name }} | Charry Scents
                             Makeup
                         </option>
 
+
+                        <!-- SKINCARE -->
 
                         <option
                             value="Skincare"
@@ -199,6 +215,8 @@ Edit {{ product.name }} | Charry Scents
                         </option>
 
 
+                        <!-- GIFT SETS -->
+
                         <option
                             value="Gift Sets"
                             {% if product.category =="GiftSets" %}
@@ -208,6 +226,8 @@ Edit {{ product.name }} | Charry Scents
                             Gift Sets
                         </option>
 
+
+                        <!-- ACCESSORIES -->
 
                         <option
                             value="Accessories"
@@ -288,17 +308,55 @@ Edit {{ product.name }} | Charry Scents
                         Current Product Image
                     </label>
 
+
                     <div class="mt-2">
 
-                        <img
-                            src="{{ url_for(
-                                'static',
-                                filename='images/' ~ product.image
-                            ) }}"
-                            alt="{{ product.name }}"
-                            class="img-fluid rounded"
-                            style="max-width: 250px;"
-                        >
+
+                        <!--
+                            NEW PRODUCTS:
+                            Images uploaded through the admin
+                            panel are stored on Cloudinary.
+
+                            OLD PRODUCTS:
+                            Existing images such as perfume.jpg
+                            remain inside static/images.
+                        -->
+
+
+                        {% if product.image and (
+                            product.image.startswith('http://')
+                            or product.image.startswith('https://')
+                        ) %}
+
+
+                            <!-- CLOUDINARY IMAGE -->
+
+                            <img
+                                src="{{ product.image }}"
+                                alt="{{ product.name }}"
+                                class="img-fluid rounded"
+                                style="max-width: 250px;"
+                            >
+
+
+                        {% else %}
+
+
+                            <!-- LOCAL STATIC IMAGE -->
+
+                            <img
+                                src="{{ url_for(
+                                    'static',
+                                    filename='images/' ~ product.image
+                                ) }}"
+                                alt="{{ product.name }}"
+                                class="img-fluid rounded"
+                                style="max-width: 250px;"
+                            >
+
+
+                        {% endif %}
+
 
                     </div>
 
@@ -345,6 +403,8 @@ Edit {{ product.name }} | Charry Scents
                 <div class="d-flex gap-2 flex-wrap">
 
 
+                    <!-- SAVE CHANGES -->
+
                     <button
                         type="submit"
                         class="btn btn-main"
@@ -354,6 +414,9 @@ Edit {{ product.name }} | Charry Scents
                     </button>
 
 
+
+                    <!-- CANCEL -->
+
                     <a
                         href="{{ url_for('admin_products') }}"
                         class="btn btn-outline-secondary"
@@ -361,6 +424,9 @@ Edit {{ product.name }} | Charry Scents
                         Cancel
                     </a>
 
+
+
+                    <!-- VIEW PRODUCT -->
 
                     <a
                         href="{{ url_for(

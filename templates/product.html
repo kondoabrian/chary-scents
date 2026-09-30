@@ -72,14 +72,50 @@
 
                 <div class="product-detail-image">
 
-                    <img
-                        src="{{ url_for(
-                            'static',
-                            filename='images/' ~ product.image
-                        ) }}"
-                        alt="{{ product.name }}"
-                        loading="lazy"
-                    >
+
+                    <!--
+                        NEW PRODUCTS:
+                        Images uploaded through the admin panel
+                        are stored on Cloudinary.
+
+                        OLD PRODUCTS:
+                        Existing images such as perfume.jpg
+                        remain inside static/images.
+                    -->
+
+
+                    {% if product.image and (
+                        product.image.startswith('http://')
+                        or product.image.startswith('https://')
+                    ) %}
+
+
+                        <!-- CLOUDINARY IMAGE -->
+
+                        <img
+                            src="{{ product.image }}"
+                            alt="{{ product.name }}"
+                            loading="lazy"
+                        >
+
+
+                    {% else %}
+
+
+                        <!-- LOCAL STATIC IMAGE -->
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='images/' ~ product.image
+                            ) }}"
+                            alt="{{ product.name }}"
+                            loading="lazy"
+                        >
+
+
+                    {% endif %}
+
 
                 </div>
 
@@ -178,7 +214,7 @@
                         <button
                             type="button"
                             class="btn btn-main add-cart-btn"
-                            onclick='addToCart({{ product.name | tojson}})'
+                            onclick='addToCart({{ product.name | tojson }})'
                         >
 
                             <i class="bi bi-bag-plus"></i>
@@ -192,12 +228,14 @@
                         <!-- WHATSAPP ORDER -->
 
                         <a
-                            href="https://wa.me/256706740166?text={{ (
-                                'Hello Charry Scents, I would like to order ' ~
-                                product.name ~
-                                '. Price: UGX ' ~
-                                '{:,.0f}'.format(product.price)
-                            ) | urlencode }}"
+                            href="https://wa.me/256706740166?text={{
+                                (
+                                    'Hello Charry Scents, I would like to order ' ~
+                                    product.name ~
+                                    '. Price: UGX ' ~
+                                    '{:,.0f}'.format(product.price)
+                                ) | urlencode
+                            }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             class="btn whatsapp-button detail-whatsapp"

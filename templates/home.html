@@ -371,16 +371,40 @@ Home | Charry Scents
                                 {% endif %}
 
 
-                                <!-- PRODUCT IMAGE -->
+                                <!-- =========================================
+                                     PRODUCT IMAGE
+                                     Supports:
+                                     1. Cloudinary image URLs
+                                     2. Old local static images
+                                     ========================================= -->
 
-                                <img
-                                    src="{{ url_for(
-                                        'static',
-                                        filename='images/' ~ product.image
-                                    ) }}"
-                                    alt="{{ product.name }}"
-                                    loading="lazy"
-                                >
+                                {% if product.image and (
+                                    product.image.startswith('http://')
+                                    or product.image.startswith('https://')
+                                ) %}
+
+                                    <!-- CLOUDINARY IMAGE -->
+
+                                    <img
+                                        src="{{ product.image }}"
+                                        alt="{{ product.name }}"
+                                        loading="lazy"
+                                    >
+
+                                {% else %}
+
+                                    <!-- LOCAL STATIC IMAGE -->
+
+                                    <img
+                                        src="{{ url_for(
+                                            'static',
+                                            filename='images/' ~ product.image
+                                        ) }}"
+                                        alt="{{ product.name }}"
+                                        loading="lazy"
+                                    >
+
+                                {% endif %}
 
                             </div>
 

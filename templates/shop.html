@@ -218,14 +218,48 @@ Shop | Charry Scents
 
                             <div class="product-image">
 
-                                <img
-                                    src="{{ url_for(
-                                        'static',
-                                        filename='images/' ~ product.image
-                                    ) }}"
-                                    alt="{{ product.name }}"
-                                    loading="lazy"
-                                >
+
+                                <!--
+                                    New products uploaded from the
+                                    admin panel use Cloudinary URLs.
+
+                                    Older products still use images
+                                    stored inside static/images.
+                                -->
+
+
+                                {% if product.image and (
+                                    product.image.startswith('http://')
+                                    or product.image.startswith('https://')
+                                ) %}
+
+
+                                    <!-- CLOUDINARY IMAGE -->
+
+                                    <img
+                                        src="{{ product.image }}"
+                                        alt="{{ product.name }}"
+                                        loading="lazy"
+                                    >
+
+
+                                {% else %}
+
+
+                                    <!-- LOCAL STATIC IMAGE -->
+
+                                    <img
+                                        src="{{ url_for(
+                                            'static',
+                                            filename='images/' ~ product.image
+                                        ) }}"
+                                        alt="{{ product.name }}"
+                                        loading="lazy"
+                                    >
+
+
+                                {% endif %}
+
 
                             </div>
 

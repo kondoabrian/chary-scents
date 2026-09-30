@@ -135,15 +135,52 @@ Product Management | Charry Scents
 
                             <div class="admin-product-image-wrapper">
 
-                                <img
-                                    src="{{ url_for(
-                                        'static',
-                                        filename='images/' ~ product.image
-                                    ) }}"
-                                    alt="{{ product.name }}"
-                                    class="admin-product-image"
-                                    loading="lazy"
-                                >
+
+                                <!--
+                                    NEW PRODUCTS:
+                                    Images uploaded through the
+                                    admin panel are stored on Cloudinary.
+
+                                    OLD PRODUCTS:
+                                    Existing images such as perfume.jpg
+                                    remain inside static/images.
+                                -->
+
+
+                                {% if product.image and (
+                                    product.image.startswith('http://')
+                                    or product.image.startswith('https://')
+                                ) %}
+
+
+                                    <!-- CLOUDINARY IMAGE -->
+
+                                    <img
+                                        src="{{ product.image }}"
+                                        alt="{{ product.name }}"
+                                        class="admin-product-image"
+                                        loading="lazy"
+                                    >
+
+
+                                {% else %}
+
+
+                                    <!-- LOCAL STATIC IMAGE -->
+
+                                    <img
+                                        src="{{ url_for(
+                                            'static',
+                                            filename='images/' ~ product.image
+                                        ) }}"
+                                        alt="{{ product.name }}"
+                                        class="admin-product-image"
+                                        loading="lazy"
+                                    >
+
+
+                                {% endif %}
+
 
                             </div>
 

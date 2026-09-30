@@ -1,7 +1,4 @@
-
 import os
-import uuid
-
 from dotenv import load_dotenv
 
 from flask import (
@@ -15,8 +12,9 @@ from flask import (
 
 import mysql.connector
 
+import cloudinary
+import cloudinary.uploader
 from werkzeug.security import check_password_hash
-from werkzeug.utils import secure_filename
 
 
 # =========================================================
@@ -24,7 +22,16 @@ from werkzeug.utils import secure_filename
 # =========================================================
 
 load_dotenv()
+# =========================================================
+# CLOUDINARY CONFIGURATION
+# =========================================================
 
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 
 # =========================================================
 # CREATE FLASK APPLICATION
@@ -111,6 +118,82 @@ def allowed_file(filename):
         and filename.rsplit(".", 1)[1].lower()
         in ALLOWED_EXTENSIONS
     )
+
+
+# =========================================================
+# CLOUDINARY IMAGE HELPERS
+# =========================================================
+
+def is_cloudinary_image(image_value):
+
+    if not image_value:
+        return False
+
+    return (
+        image_value.startswith("http://")
+        or image_value.startswith("https://")
+    )
+
+
+def upload_product_image(image):
+    """Upload a product image to Cloudinary and return its HTTPS URL."""
+
+    upload_result = cloudinary.uploader.upload(
+        image,
+        folder="charry_scents/products",
+        resource_type="image"
+    )
+
+    return upload_result["secure_url"]
+
+
+def get_cloudinary_public_id(image_url):
+    """Extract the Cloudinary public ID from one of our stored image URLs."""
+
+    if not is_cloudinary_image(image_url):
+        return None
+
+    if "res.cloudinary.com" not in image_url:
+        return None
+
+    try:
+        upload_marker = "/upload/"
+
+        if upload_marker not in image_url:
+            return None
+
+        image_part = image_url.split(upload_marker, 1)[1]
+        parts = image_part.split("/")
+
+        # Remove Cloudinary's version segment, for example v1723456789.
+        if parts and parts[0].startswith("v") and parts[0][1:].isdigit():
+            parts = parts[1:]
+
+        public_id_with_extension = "/".join(parts)
+        public_id = public_id_with_extension.rsplit(".", 1)[0]
+
+        return public_id
+
+    except (IndexError, ValueError):
+        return None
+
+
+def delete_cloudinary_image(image_url):
+    """Delete a Cloudinary image without crashing the website on failure."""
+
+    public_id = get_cloudinary_public_id(image_url)
+
+    if not public_id:
+        return
+
+    try:
+        cloudinary.uploader.destroy(
+            public_id,
+            resource_type="image",
+            invalidate=True
+        )
+    except Exception as exception:
+        print("CLOUDINARY DELETE ERROR:", exception)
 
 
 # =========================================================
@@ -565,7 +648,14 @@ def admin_products():
         products=products
     )
 
-@app.route("/admin/products/add", methods=["GET", "POST"])
+# =========================================================
+# ADMIN - ADD PRODUCT
+# =========================================================
+
+@app.route(
+    "/admin/products/add",
+    methods=["GET", "POST"]
+)
 def admin_add_product():
 
     if not session.get("admin_logged_in"):
@@ -579,7 +669,6 @@ def admin_add_product():
         category = request.form.get("category", "").strip()
         price = request.form.get("price", "").strip()
         description = request.form.get("description", "").strip()
-
         image = request.files.get("image")
 
         # ==========================================
@@ -588,109 +677,94 @@ def admin_add_product():
 
         if not name:
             error = "Please enter the product name."
-
         elif not category:
             error = "Please select a category."
-
         elif not price:
             error = "Please enter the product price."
-
+        elif not description:
+            error = "Please enter the product description."
         elif not image or image.filename == "":
             error = "Please choose a product image."
-
         elif not allowed_file(image.filename):
             error = "Only PNG, JPG, JPEG and WEBP images are allowed."
 
+        if not error:
+            try:
+                price_value = float(price)
+                if price_value < 0:
+                    raise ValueError
+            except ValueError:
+                error = "Please enter a valid product price."
 
         if error:
-
             return render_template(
                 "admin_add_product.html",
                 error=error
             )
 
+        image_url = None
+        connection = None
+        cursor = None
 
-        # ==========================================
-        # CREATE SAFE UNIQUE IMAGE NAME
-        # ==========================================
+        try:
+            # Upload to persistent Cloudinary storage.
+            image_url = upload_product_image(image)
 
-        original_filename = secure_filename(
-            image.filename
-        )
+            connection = get_db_connection()
+            cursor = connection.cursor()
 
-        extension = original_filename.rsplit(
-            ".",
-            1
-        )[1].lower()
-
-        image_filename = (
-            uuid.uuid4().hex
-            + "."
-            + extension
-        )
-
-
-        # ==========================================
-        # SAVE IMAGE
-        # ==========================================
-
-        os.makedirs(
-            app.config["UPLOAD_FOLDER"],
-            exist_ok=True
-        )
-
-        image_path = os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            image_filename
-        )
-
-        image.save(image_path)
-
-
-        # ==========================================
-        # SAVE PRODUCT IN DATABASE
-        # ==========================================
-
-        connection = get_db_connection()
-
-        cursor = connection.cursor()
-
-        cursor.execute(
-            """
-            INSERT INTO products
-            (
-                name,
-                category,
-                price,
-                description,
-                image
+            cursor.execute(
+                """
+                INSERT INTO products
+                (
+                    name,
+                    category,
+                    price,
+                    description,
+                    image
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                """,
+                (
+                    name,
+                    category,
+                    price_value,
+                    description,
+                    image_url
+                )
             )
-            VALUES (%s, %s, %s, %s, %s)
-            """,
-            (
-                name,
-                category,
-                price,
-                description,
-                image_filename
-            )
-        )
 
-        connection.commit()
+            connection.commit()
 
-        cursor.close()
-        connection.close()
+            return redirect(url_for("admin_products"))
 
+        except Exception as exception:
+            print("ADD PRODUCT ERROR:", exception)
 
-        return redirect(
-            url_for("admin_products")
-        )
+            if connection:
+                try:
+                    connection.rollback()
+                except Exception:
+                    pass
 
+            # If the upload succeeded but DB insertion failed,
+            # remove the unused Cloudinary image.
+            if image_url:
+                delete_cloudinary_image(image_url)
+
+            error = "The product could not be added. Please try again."
+
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
 
     return render_template(
         "admin_add_product.html",
         error=error
     )
+
 # ==========================================================
 # ADMIN - EDIT PRODUCT
 # ==========================================================
@@ -701,27 +775,11 @@ def admin_add_product():
 )
 def admin_edit_product(product_id):
 
-    # ------------------------------------------------------
-    # ADMIN LOGIN CHECK
-    # ------------------------------------------------------
-
     if not session.get("admin_logged_in"):
-
-        return redirect(
-            url_for("admin_login")
-        )
-
-
-    # ------------------------------------------------------
-    # GET CURRENT PRODUCT
-    # ------------------------------------------------------
+        return redirect(url_for("admin_login"))
 
     connection = get_db_connection()
-
-    cursor = connection.cursor(
-        dictionary=True
-    )
-
+    cursor = connection.cursor(dictionary=True)
 
     cursor.execute(
         """
@@ -732,120 +790,46 @@ def admin_edit_product(product_id):
         (product_id,)
     )
 
-
     product = cursor.fetchone()
-
-
     cursor.close()
     connection.close()
 
-
-    # ------------------------------------------------------
-    # PRODUCT DOES NOT EXIST
-    # ------------------------------------------------------
-
     if product is None:
-
         return "Product not found", 404
-
-
-    # ------------------------------------------------------
-    # FORM SUBMITTED
-    # ------------------------------------------------------
 
     if request.method == "POST":
 
-        name = request.form.get(
-            "name",
-            ""
-        ).strip()
+        name = request.form.get("name", "").strip()
+        category = request.form.get("category", "").strip()
+        price = request.form.get("price", "").strip()
+        description = request.form.get("description", "").strip()
+        image_file = request.files.get("image")
 
-
-        category = request.form.get(
-            "category",
-            ""
-        ).strip()
-
-
-        price = request.form.get(
-            "price",
-            ""
-        ).strip()
-
-
-        description = request.form.get(
-            "description",
-            ""
-        ).strip()
-
-
-        image_file = request.files.get(
-            "image"
-        )
-
-
-        # --------------------------------------------------
-        # VALIDATE REQUIRED FIELDS
-        # --------------------------------------------------
-
-        if (
-            not name
-            or not category
-            or not price
-            or not description
-        ):
-
+        if not name or not category or not price or not description:
             return render_template(
                 "admin_edit_product.html",
                 product=product,
                 error="Please complete all required fields."
             )
 
-
-        # --------------------------------------------------
-        # VALIDATE PRICE
-        # --------------------------------------------------
-
         try:
-
             price_value = float(price)
-
-
             if price_value < 0:
-
                 raise ValueError
-
-
         except ValueError:
-
             return render_template(
                 "admin_edit_product.html",
                 product=product,
                 error="Please enter a valid product price."
             )
 
+        image_value = product["image"]
+        new_cloudinary_image = None
 
-        # --------------------------------------------------
-        # KEEP CURRENT IMAGE BY DEFAULT
-        # --------------------------------------------------
+        # Upload a replacement only when the admin selected one.
+        if image_file and image_file.filename:
 
-        image_filename = product["image"]
-
-
-        # --------------------------------------------------
-        # NEW IMAGE SELECTED
-        # --------------------------------------------------
-
-        if (
-            image_file
-            and image_file.filename
-        ):
-
-
-            if not allowed_file(
-                image_file.filename
-            ):
-
+            if not allowed_file(image_file.filename):
                 return render_template(
                     "admin_edit_product.html",
                     product=product,
@@ -855,75 +839,33 @@ def admin_edit_product(product_id):
                     )
                 )
 
-
-            # ----------------------------------------------
-            # GET SAFE ORIGINAL FILE NAME
-            # ----------------------------------------------
-
-            original_filename = secure_filename(
-                image_file.filename
-            )
-
-
-            # ----------------------------------------------
-            # GET FILE EXTENSION
-            # ----------------------------------------------
-
-            file_extension = (
-                original_filename
-                .rsplit(".", 1)[1]
-                .lower()
-            )
-
-
-            # ----------------------------------------------
-            # CREATE UNIQUE FILE NAME
-            # ----------------------------------------------
-
-            image_filename = (
-                str(uuid.uuid4())
-                + "."
-                + file_extension
-            )
-
-
-            # ----------------------------------------------
-            # SAVE NEW IMAGE
-            # ----------------------------------------------
-
-            image_path = os.path.join(
-                app.config["UPLOAD_FOLDER"],
-                image_filename
-            )
-
-
-            image_file.save(
-                image_path
-            )
-
-
-        # --------------------------------------------------
-        # UPDATE DATABASE
-        # --------------------------------------------------
+            try:
+                new_cloudinary_image = upload_product_image(image_file)
+                image_value = new_cloudinary_image
+            except Exception as exception:
+                print("CLOUDINARY UPLOAD ERROR:", exception)
+                return render_template(
+                    "admin_edit_product.html",
+                    product=product,
+                    error=(
+                        "The new image could not be uploaded. "
+                        "Please try again."
+                    )
+                )
 
         connection = get_db_connection()
-
         cursor = connection.cursor()
 
-
         try:
-
             cursor.execute(
                 """
                 UPDATE products
-
                 SET
                     name = %s,
                     category = %s,
                     price = %s,
                     description = %s,
                     image = %s
-
                 WHERE id = %s
                 """,
                 (
@@ -931,70 +873,125 @@ def admin_edit_product(product_id):
                     category,
                     price_value,
                     description,
-                    image_filename,
+                    image_value,
                     product_id
                 )
             )
 
-
             connection.commit()
 
-
-        except Exception:
-
+        except Exception as exception:
             connection.rollback()
+            print("EDIT PRODUCT DATABASE ERROR:", exception)
 
-            cursor.close()
-            connection.close()
-
-
-            # If we created a new image but database
-            # update failed, remove that new image.
-
-            if (
-                image_filename
-                != product["image"]
-            ):
-
-                new_image_path = os.path.join(
-                    app.config["UPLOAD_FOLDER"],
-                    image_filename
-                )
-
-
-                if os.path.exists(
-                    new_image_path
-                ):
-
-                    os.remove(
-                        new_image_path
-                    )
-
+            if new_cloudinary_image:
+                delete_cloudinary_image(new_cloudinary_image)
 
             return render_template(
                 "admin_edit_product.html",
                 product=product,
-                error=(
-                    "The product could not be updated. "
-                    "Please try again."
-                )
+                error="The product could not be updated. Please try again."
             )
 
+        finally:
+            cursor.close()
+            connection.close()
 
+        # Database now points to the new image, so the old image can be removed.
+        if new_cloudinary_image:
+            old_image_value = product.get("image")
+
+            if is_cloudinary_image(old_image_value):
+                delete_cloudinary_image(old_image_value)
+            elif old_image_value:
+                protected_images = {
+                    "perfume.jpg",
+                    "perfume_oil.jpg",
+                    "lip_gloss.jpg",
+                    "lipstick.jpg",
+                    "makeup.jpg",
+                    "skincare.jpg",
+                    "gift_set.jpg",
+                    "accessories.jpg"
+                }
+
+                if old_image_value not in protected_images:
+                    old_image_path = os.path.join(
+                        app.config["UPLOAD_FOLDER"],
+                        old_image_value
+                    )
+
+                    if os.path.exists(old_image_path):
+                        try:
+                            os.remove(old_image_path)
+                        except OSError:
+                            pass
+
+        return redirect(url_for("admin_products"))
+
+    return render_template(
+        "admin_edit_product.html",
+        product=product
+    )
+
+# =========================================================
+# ADMIN - DELETE PRODUCT
+# =========================================================
+
+@app.route(
+    "/admin/products/delete/<int:product_id>",
+    methods=["POST"]
+)
+def admin_delete_product(product_id):
+
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM products
+        WHERE id = %s
+        """,
+        (product_id,)
+    )
+
+    product = cursor.fetchone()
+
+    if product is None:
         cursor.close()
         connection.close()
+        return redirect(url_for("admin_products"))
 
+    image_value = product.get("image")
 
-        # --------------------------------------------------
-        # DELETE OLD UPLOADED IMAGE
-        # --------------------------------------------------
+    try:
+        cursor.execute(
+            """
+            DELETE FROM products
+            WHERE id = %s
+            """,
+            (product_id,)
+        )
+        connection.commit()
+    except Exception as exception:
+        connection.rollback()
+        print("DELETE PRODUCT DATABASE ERROR:", exception)
+        cursor.close()
+        connection.close()
+        return redirect(url_for("admin_products"))
 
-        if (
-            image_filename
-            != product["image"]
-        ):
+    cursor.close()
+    connection.close()
 
-
+    # Remove the image only after the database deletion succeeds.
+    if image_value:
+        if is_cloudinary_image(image_value):
+            delete_cloudinary_image(image_value)
+        else:
             protected_images = {
                 "perfume.jpg",
                 "perfume_oil.jpg",
@@ -1006,140 +1003,20 @@ def admin_edit_product(product_id):
                 "accessories.jpg"
             }
 
-
-            old_image_filename = product[
-                "image"
-            ]
-
-
-            if (
-                old_image_filename
-                and old_image_filename
-                not in protected_images
-            ):
-
-
-                old_image_path = os.path.join(
+            if image_value not in protected_images:
+                image_path = os.path.join(
                     app.config["UPLOAD_FOLDER"],
-                    old_image_filename
+                    image_value
                 )
 
-
-                if os.path.exists(
-                    old_image_path
-                ):
-
+                if os.path.exists(image_path):
                     try:
-
-                        os.remove(
-                            old_image_path
-                        )
-
+                        os.remove(image_path)
                     except OSError:
-
                         pass
 
+    return redirect(url_for("admin_products"))
 
-        # --------------------------------------------------
-        # RETURN TO PRODUCT MANAGEMENT
-        # --------------------------------------------------
-
-        return redirect(
-            url_for(
-                "admin_products"
-            )
-        )
-
-
-    # ------------------------------------------------------
-    # GET REQUEST
-    # ------------------------------------------------------
-
-    return render_template(
-        "admin_edit_product.html",
-        product=product
-    )
-@app.route("/admin/products/delete/<int:product_id>", methods=["POST"])
-def admin_delete_product(product_id):
-
-    if not session.get("admin_logged_in"):
-        return redirect(url_for("admin_login"))
-
-    connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)
-
-    # Get product first so we know its image filename
-    cursor.execute(
-        """
-        SELECT *
-        FROM products
-        WHERE id = %s
-        """,
-        (product_id,)
-    )
-
-    product = cursor.fetchone()
-
-    if product is None:
-        cursor.close()
-        connection.close()
-
-        return redirect(
-            url_for("admin_products")
-        )
-
-
-    # Delete product from database
-    cursor.execute(
-        """
-        DELETE FROM products
-        WHERE id = %s
-        """,
-        (product_id,)
-    )
-
-    connection.commit()
-
-    cursor.close()
-    connection.close()
-
-
-    # ==========================================
-    # DELETE UPLOADED IMAGE FILE
-    # ==========================================
-
-    image_filename = product.get("image")
-
-    if image_filename:
-
-        image_path = os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            image_filename
-        )
-
-        # Do not accidentally remove original
-        # project images unless you want to.
-        protected_images = {
-            "perfume.jpg",
-            "perfume_oil.jpg",
-            "lip_gloss.jpg",
-            "lipstick.jpg",
-            "makeup.jpg",
-            "skincare.jpg",
-            "gift_set.jpg",
-            "accessories.jpg"
-        }
-
-        if (
-            image_filename not in protected_images
-            and os.path.exists(image_path)
-        ):
-            os.remove(image_path)
-
-
-    return redirect(
-        url_for("admin_products")
-    )
 @app.route("/admin/logout")
 def admin_logout():
 
