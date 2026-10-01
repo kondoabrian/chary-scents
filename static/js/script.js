@@ -4,6 +4,344 @@
 
 
 // ==========================================================
+// PWA INSTALLATION
+// ==========================================================
+
+// The browser stores the installation prompt here when
+// Charry Scents becomes installable.
+
+let deferredInstallPrompt = null;
+
+
+// ==========================================================
+// CHECK WHETHER APP IS ALREADY INSTALLED
+// ==========================================================
+
+function isCharryScentsInstalled() {
+
+    // Android / Chrome / Edge installed PWA.
+
+    if (
+        window.matchMedia(
+            "(display-mode: standalone)"
+        ).matches
+    ) {
+
+        return true;
+
+    }
+
+
+    // iPhone / iPad installed web app.
+
+    if (
+        window.navigator.standalone === true
+    ) {
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
+
+
+
+// ==========================================================
+// DETECT IOS
+// ==========================================================
+
+function isIOSDevice() {
+
+    return /iphone|ipad|ipod/i.test(
+        window.navigator.userAgent
+    );
+
+}
+
+
+
+// ==========================================================
+// SHOW INSTALL BUTTON
+// ==========================================================
+
+function showInstallAppButton() {
+
+    const installButton =
+        document.getElementById(
+            "installAppButton"
+        );
+
+
+    if (!installButton) {
+        return;
+    }
+
+
+    if (isCharryScentsInstalled()) {
+
+        installButton.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    installButton.style.display =
+        "inline-flex";
+
+}
+
+
+
+// ==========================================================
+// HIDE INSTALL BUTTON
+// ==========================================================
+
+function hideInstallAppButton() {
+
+    const installButton =
+        document.getElementById(
+            "installAppButton"
+        );
+
+
+    if (!installButton) {
+        return;
+    }
+
+
+    installButton.style.display =
+        "none";
+
+}
+
+
+
+// ==========================================================
+// SHOW INSTALL MESSAGE
+// ==========================================================
+
+function showInstallAppMessage(
+    message
+) {
+
+    const messageElement =
+        document.getElementById(
+            "installAppMessage"
+        );
+
+
+    if (!messageElement) {
+        return;
+    }
+
+
+    messageElement.textContent =
+        message;
+
+
+    setTimeout(
+        function() {
+
+            messageElement.textContent =
+                "";
+
+        },
+        8000
+    );
+
+}
+
+
+
+// ==========================================================
+// BROWSER SAYS THE PWA CAN BE INSTALLED
+// ==========================================================
+
+window.addEventListener(
+    "beforeinstallprompt",
+    function(event) {
+
+        // Stop the browser from immediately showing
+        // its own installation prompt.
+
+        event.preventDefault();
+
+
+        // Save the event so our Install App button
+        // can trigger it later.
+
+        deferredInstallPrompt =
+            event;
+
+
+        console.log(
+            "Charry Scents is ready to install."
+        );
+
+
+        showInstallAppButton();
+
+    }
+);
+
+
+
+// ==========================================================
+// INSTALL CHARRY SCENTS APP
+// ==========================================================
+
+async function installCharryScentsApp() {
+
+    // ------------------------------------------------------
+    // APP ALREADY INSTALLED
+    // ------------------------------------------------------
+
+    if (isCharryScentsInstalled()) {
+
+        hideInstallAppButton();
+
+        showInstallAppMessage(
+            "Charry Scents is already installed on this device."
+        );
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // NORMAL PWA INSTALL PROMPT
+    // Chrome / Edge / Android
+    // ------------------------------------------------------
+
+    if (deferredInstallPrompt) {
+
+        try {
+
+            deferredInstallPrompt.prompt();
+
+
+            const choiceResult =
+                await deferredInstallPrompt.userChoice;
+
+
+            if (
+                choiceResult.outcome ===
+                "accepted"
+            ) {
+
+                console.log(
+                    "Charry Scents installation accepted."
+                );
+
+
+                showInstallAppMessage(
+                    "Installing Charry Scents..."
+                );
+
+
+                hideInstallAppButton();
+
+            } else {
+
+                console.log(
+                    "Charry Scents installation cancelled."
+                );
+
+
+                showInstallAppMessage(
+                    "Installation cancelled. You can install the app later."
+                );
+
+            }
+
+
+            deferredInstallPrompt =
+                null;
+
+
+        } catch (error) {
+
+            console.error(
+                "Unable to open installation prompt:",
+                error
+            );
+
+
+            showInstallAppMessage(
+                "Unable to open the installation window. Please use your browser menu and choose Install App."
+            );
+
+        }
+
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // IPHONE / IPAD
+    // ------------------------------------------------------
+
+    if (isIOSDevice()) {
+
+        showInstallAppMessage(
+            "To install Charry Scents on iPhone: tap the Share button in Safari, then choose Add to Home Screen."
+        );
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // INSTALL PROMPT NOT AVAILABLE
+    // ------------------------------------------------------
+
+    showInstallAppMessage(
+        "To install Charry Scents, open your browser menu and choose Install App or Add to Home screen."
+    );
+
+}
+
+
+
+// ==========================================================
+// APP SUCCESSFULLY INSTALLED
+// ==========================================================
+
+window.addEventListener(
+    "appinstalled",
+    function() {
+
+        console.log(
+            "Charry Scents was installed successfully."
+        );
+
+
+        deferredInstallPrompt =
+            null;
+
+
+        hideInstallAppButton();
+
+
+        showInstallAppMessage(
+            "✓ Charry Scents installed successfully!"
+        );
+
+    }
+);
+
+
+
+// ==========================================================
 // PRODUCT SEARCH
 // ==========================================================
 
@@ -1050,6 +1388,35 @@ document.addEventListener(
 document.addEventListener(
     "DOMContentLoaded",
     function() {
+
+
+        // ==================================================
+        // PWA INSTALL BUTTON
+        // ==================================================
+
+        if (
+            isCharryScentsInstalled()
+        ) {
+
+            hideInstallAppButton();
+
+        } else if (
+            deferredInstallPrompt
+        ) {
+
+            showInstallAppButton();
+
+        } else if (
+            isIOSDevice()
+        ) {
+
+            // iOS does not provide beforeinstallprompt.
+            // We still show the button so we can explain
+            // how to use Safari's Add to Home Screen.
+
+            showInstallAppButton();
+
+        }
 
 
         // ==================================================

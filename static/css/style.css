@@ -2867,3 +2867,229 @@ img {
     .admin-product-action { font-size: 11px; gap: 2px; padding: 5px 1px; }
     .admin-product-action i { font-size: 11px; }
 }
+/* ==========================================================
+   CHARRY SCENTS - INSTALL APP BUTTON
+========================================================== */
+
+#installAppButton {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-width: 170px;
+
+    padding:
+        13px
+        26px;
+
+    background:
+        linear-gradient(
+            135deg,
+            indigo
+        );
+
+    color: white;
+
+    border:
+        2px solid
+        #E7CE70;
+
+    border-radius: 6px;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.3px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 22px
+        rgba(201, 162, 39, 0.30);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        background 0.3s ease,
+        border-color 0.3s ease;
+
+    overflow: hidden;
+}
+
+
+/* INSTALL ICON */
+
+#installAppButton i {
+
+    font-size: 18px;
+
+    transition:
+        transform 0.3s ease;
+
+}
+
+
+/* INSTALL BUTTON HOVER */
+
+#installAppButton:hover {
+
+    background:
+        linear-gradient(
+            135deg,
+            #E5C85C,
+            #F1DC8A
+        );
+
+    color: #2B2024;
+
+    border-color:
+        #F1DC8A;
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 12px 28px
+        rgba(201, 162, 39, 0.42);
+
+}
+
+
+/* MOVE DOWNLOAD ICON SLIGHTLY ON HOVER */
+
+#installAppButton:hover i {
+
+    transform:
+        translateY(2px);
+
+}
+
+
+/* BUTTON PRESSED */
+
+#installAppButton:active {
+
+    transform:
+        translateY(0);
+
+    box-shadow:
+        0 5px 14px
+        rgba(201, 162, 39, 0.30);
+
+}
+
+
+/* KEYBOARD ACCESSIBILITY */
+
+#installAppButton:focus-visible {
+
+    outline:
+        3px solid
+        rgba(255, 255, 255, 0.90);
+
+    outline-offset:
+        3px;
+
+}
+
+
+/* ==========================================================
+   INSTALL APP MESSAGE
+========================================================== */
+
+#installAppMessage {
+
+    min-height: 24px;
+
+    max-width: 650px;
+
+    margin:
+        18px auto
+        0;
+
+    padding: 0 10px;
+
+    color: #FFFFFF;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    line-height: 1.6;
+
+    text-align: center;
+
+    text-shadow:
+        0 1px 3px
+        rgba(0, 0, 0, 0.45);
+
+}
+
+
+/* ==========================================================
+   INSTALL BUTTON - TABLETS AND PHONES
+========================================================== */
+
+@media (max-width: 768px) {
+
+    #installAppButton {
+
+        min-width: 165px;
+
+        padding:
+            12px
+            22px;
+
+        font-size: 14px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   INSTALL BUTTON - SMALL PHONES
+========================================================== */
+
+@media (max-width: 576px) {
+
+    .hero-buttons {
+
+        width: 100%;
+
+        align-items: center;
+
+    }
+
+
+    .hero-buttons > .btn {
+
+        min-width: 190px;
+
+    }
+
+
+    #installAppButton {
+
+        min-width: 190px;
+
+    }
+
+
+    #installAppMessage {
+
+        font-size: 13px;
+
+        max-width: 330px;
+
+    }
+
+}

@@ -7,7 +7,8 @@ from flask import (
     request,
     session,
     redirect,
-    url_for
+    url_for,
+    send_from_directory
 )
 
 import mysql.connector
@@ -353,6 +354,27 @@ products = [
 
 ]
 
+# =========================================================
+# PWA SERVICE WORKER
+# =========================================================
+
+@app.route("/service-worker.js")
+def service_worker():
+
+    response = send_from_directory(
+        os.path.join(
+            app.root_path,
+            "static"
+        ),
+        "service-worker.js",
+        mimetype="application/javascript"
+    )
+
+    # Prevent the browser from holding an outdated
+    # service worker after we deploy a newer version.
+    response.headers["Cache-Control"] = "no-cache"
+
+    return response
 
 # =========================================================
 # HOME PAGE

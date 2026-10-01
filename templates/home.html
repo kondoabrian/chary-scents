@@ -32,6 +32,9 @@ Home | Charry Scents
             makeup, skincare products and beauty accessories.
         </p>
 
+
+        <!-- ================= HERO BUTTONS ================= -->
+
         <div class="hero-buttons">
 
             <a
@@ -41,6 +44,7 @@ Home | Charry Scents
                 Shop Now
             </a>
 
+
             <a
                 href="{{ url_for('contact') }}"
                 class="btn btn-outline-light"
@@ -48,7 +52,31 @@ Home | Charry Scents
                 Contact Us
             </a>
 
+
+            <!-- INSTALL APP -->
+
+            <button
+                type="button"
+                id="installAppButton"
+                class="btn btn-light"
+                onclick="installCharryScentsApp()"
+            >
+                <i class="bi bi-download me-2"></i>
+                Install App
+            </button>
+
         </div>
+
+
+        <!-- INSTALL APP MESSAGE -->
+
+        <div
+            id="installAppMessage"
+            class="mt-3 text-white"
+            role="status"
+            aria-live="polite"
+        ></div>
+
 
         <p class="hero-location">
 
@@ -371,12 +399,9 @@ Home | Charry Scents
                                 {% endif %}
 
 
-                                <!-- =========================================
+                                <!-- =========================
                                      PRODUCT IMAGE
-                                     Supports:
-                                     1. Cloudinary image URLs
-                                     2. Old local static images
-                                     ========================================= -->
+                                     ========================= -->
 
                                 {% if product.image and (
                                     product.image.startswith('http://')
