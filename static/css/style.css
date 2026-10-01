@@ -2888,10 +2888,11 @@ img {
     background:
         linear-gradient(
             135deg,
-            indigo
+            #C9A227,
+            #E5C85C
         );
 
-    color: white;
+    color: #2B2024;
 
     border:
         2px solid
