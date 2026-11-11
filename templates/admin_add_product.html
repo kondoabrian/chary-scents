@@ -72,7 +72,11 @@ Add Product | Charry Scents
                 action="{{ url_for('admin_add_product') }}"
                 enctype="multipart/form-data"
             >
-
+               <input
+    type="hidden"
+    name="csrf_token"
+    value="{{ csrf_token() }}"
+>
 
                 <!-- =========================================
                      PRODUCT NAME

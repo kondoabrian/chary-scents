@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-
+from urllib.parse import quote
 from flask import (
     Flask,
     render_template,
@@ -16,6 +16,10 @@ import mysql.connector
 import cloudinary
 import cloudinary.uploader
 from werkzeug.security import check_password_hash
+from flask_wtf.csrf import CSRFProtect
+from functools import wraps
+
+
 
 
 # =========================================================
@@ -39,6 +43,7 @@ cloudinary.config(
 # =========================================================
 
 app = Flask(__name__)
+csrf = CSRFProtect(app)
 UPLOAD_FOLDER = os.path.join(
     app.root_path,
     "static",
@@ -58,13 +63,32 @@ app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 # =========================================================
 # FLASK SECRET KEY
 # =========================================================
-
-app.secret_key = os.getenv(
+app.config["SECRET_KEY"] = os.getenv(
     "SECRET_KEY",
     "local-development-secret-key"
 )
 
+# Session cookie security
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=(
+        os.getenv("COOKIE_SECURE", "false").lower() == "true"
+    )
+)
 
+@app.context_processor
+def inject_cart_count():
+    cart = session.get("cart", {})
+
+    cart_count = sum(
+        int(quantity)
+        for quantity in cart.values()
+    )
+
+    return {
+        "cart_count": cart_count
+    }
 # =========================================================
 # DATABASE CONNECTION
 # =========================================================
@@ -112,6 +136,25 @@ def get_db_connection():
     return mysql.connector.connect(
         **connection_settings
     )
+# =========================================================
+# ADMIN AUTHENTICATION PROTECTION
+# =========================================================
+
+def admin_required(view_function):
+
+    @wraps(view_function)
+    def decorated_function(*args, **kwargs):
+
+        if not session.get("admin_logged_in"):
+            return redirect(url_for("admin_login"))
+
+        if not session.get("admin_id"):
+            session.clear()
+            return redirect(url_for("admin_login"))
+
+        return view_function(*args, **kwargs)
+
+    return decorated_function
 def allowed_file(filename):
 
     return (
@@ -440,7 +483,202 @@ def shop():
         products=products
     )
 
+# ==========================================================
+# SHOPPING CART
+# ==========================================================
 
+def get_cart_items():
+
+    cart = session.get("cart", {})
+
+    if not cart:
+        return [], 0
+
+    # Convert the stored product IDs to integers.
+    product_ids = [int(product_id) for product_id in cart.keys()]
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+        placeholders = ", ".join(["%s"] * len(product_ids))
+
+        cursor.execute(
+            f"""
+            SELECT id, name, category, price, image
+            FROM products
+            WHERE id IN ({placeholders})
+            """,
+            tuple(product_ids)
+        )
+
+        products = cursor.fetchall()
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    cart_items = []
+    cart_total = 0
+
+    # Use the latest product details and prices from the database.
+    for product in products:
+
+        product_id = str(product["id"])
+        quantity = int(cart.get(product_id, 0))
+
+        if quantity < 1:
+            continue
+
+        subtotal = float(product["price"]) * quantity
+
+        product["quantity"] = quantity
+        product["subtotal"] = subtotal
+
+        cart_items.append(product)
+        cart_total += subtotal
+
+    return cart_items, cart_total
+
+
+@app.route("/add-to-cart/<int:product_id>", methods=["POST"])
+def add_to_cart(product_id):
+
+    # Read the quantity submitted by the product form.
+    try:
+        quantity = int(request.form.get("quantity", 1))
+    except (TypeError, ValueError):
+        return "Invalid quantity", 400
+
+    if quantity < 1 or quantity > 99:
+        return "Quantity must be between 1 and 99", 400
+
+    # Confirm that this product exists in the database.
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute(
+            "SELECT id FROM products WHERE id = %s",
+            (product_id,)
+        )
+
+        product = cursor.fetchone()
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    if product is None:
+        return "Product not found", 404
+
+    # Get the customer's existing cart.
+    cart = session.get("cart", {})
+
+    # Use strings as dictionary keys for consistency.
+    product_id = str(product_id)
+
+    # If the product is already in the cart, add to its quantity.
+    current_quantity = int(cart.get(product_id, 0))
+    new_quantity = current_quantity + quantity
+
+    if new_quantity > 99:
+        return "Maximum quantity for this product is 99", 400
+
+    cart[product_id] = new_quantity
+
+    session["cart"] = cart
+    session.modified = True
+
+    return redirect(url_for("cart"))
+
+
+@app.route("/cart")
+def cart():
+
+    cart_items, cart_total = get_cart_items()
+
+    return render_template(
+        "cart.html",
+        cart_items=cart_items,
+        cart_total=cart_total
+    )
+
+
+@app.route(
+    "/update-cart/<int:product_id>",
+    methods=["POST"]
+)
+def update_cart(product_id):
+
+    try:
+        quantity = int(request.form.get("quantity", 1))
+    except (TypeError, ValueError):
+        return "Invalid quantity", 400
+
+    if quantity < 1 or quantity > 99:
+        return "Quantity must be between 1 and 99", 400
+
+    cart = session.get("cart", {})
+    product_id = str(product_id)
+
+    if product_id not in cart:
+        return redirect(url_for("cart"))
+
+    cart[product_id] = quantity
+
+    session["cart"] = cart
+    session.modified = True
+
+    return redirect(url_for("cart"))
+
+
+@app.route(
+    "/remove-from-cart/<int:product_id>",
+    methods=["POST"]
+)
+def remove_from_cart(product_id):
+
+    cart = session.get("cart", {})
+
+    cart.pop(str(product_id), None)
+
+    session["cart"] = cart
+    session.modified = True
+
+    return redirect(url_for("cart"))
+
+
+@app.route("/order-on-whatsapp")
+def order_on_whatsapp():
+
+    cart_items, cart_total = get_cart_items()
+
+    if not cart_items:
+        return redirect(url_for("cart"))
+
+    message = "Hello Charry Scents! I would like to place an order:\n\n"
+
+    for item in cart_items:
+
+        message += (
+            f"Product: {item['name']}\n"
+            f"Quantity: {item['quantity']}\n"
+            f"Unit price: UGX {float(item['price']):,.0f}\n"
+            f"Subtotal: UGX {item['subtotal']:,.0f}\n\n"
+        )
+
+    message += (
+        f"TOTAL: UGX {cart_total:,.0f}\n\n"
+        "Please confirm availability and delivery details. Thank you."
+    )
+
+    whatsapp_url = (
+        "https://wa.me/256706740166?text="
+        + quote(message)
+    )
+
+    return redirect(whatsapp_url)
 # =========================================================
 # PRODUCT DETAILS
 # =========================================================
@@ -534,154 +772,156 @@ def contact():
         message_sent=message_sent
     )
 # ADMIN LOGIN
-@app.route(
-    "/admin/login",
-    methods=["GET", "POST"]
-)
+
+# =========================================================
+# ADMIN LOGIN
+# =========================================================
+
+@app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
+
+    if session.get("admin_logged_in"):
+        return redirect(url_for("admin_messages"))
 
     if request.method == "POST":
 
-        username = request.form.get(
-            "username"
-        )
-
-        password = request.form.get(
-            "password"
-        )
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
 
         connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
 
-        cursor = connection.cursor(
-            dictionary=True
-        )
+        try:
+            cursor.execute(
+                """
+                SELECT *
+                FROM admins
+                WHERE username = %s
+                """,
+                (username,)
+            )
 
-        cursor.execute(
-            """
-            SELECT *
-            FROM admins
-            WHERE username = %s
-            """,
-            (username,)
-        )
+            admin = cursor.fetchone()
 
-        admin = cursor.fetchone()
-
-        cursor.close()
-
-        connection.close()
+        finally:
+            cursor.close()
+            connection.close()
 
         if admin and check_password_hash(
             admin["password"],
             password
         ):
 
+            # Start a fresh session after successful login.
+            session.clear()
+
             session["admin_logged_in"] = True
-
             session["admin_id"] = admin["id"]
+            session["admin_username"] = admin["username"]
 
-            session["admin_username"] = (
-                admin["username"]
-            )
-
-            return redirect(
-                url_for(
-                    "admin_messages"
-                )
-            )
+            return redirect(url_for("admin_messages"))
 
         return render_template(
             "admin_login.html",
             error="Invalid username or password."
         )
 
-    return render_template(
-        "admin_login.html"
-    )
+    return render_template("admin_login.html")
+
+
+# =========================================================
 # ADMIN MESSAGES
+# =========================================================
 
 @app.route("/admin/messages")
+@admin_required
 def admin_messages():
 
-    # Prevent people from opening the admin messages
-    # page without logging in.
-    if not session.get(
-        "admin_logged_in"
-    ):
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
 
-        return redirect(
-            url_for(
-                "admin_login"
-            )
+    try:
+        cursor.execute(
+            """
+            SELECT *
+            FROM messages
+            ORDER BY created_at DESC
+            """
         )
 
-    connection = get_db_connection()
+        messages = cursor.fetchall()
 
-    cursor = connection.cursor(
-        dictionary=True
-    )
-
-    cursor.execute(
-        """
-        SELECT *
-        FROM messages
-        ORDER BY created_at DESC
-        """
-    )
-
-    messages = cursor.fetchall()
-
-    cursor.close()
-
-    connection.close()
+    finally:
+        cursor.close()
+        connection.close()
 
     return render_template(
         "admin_messages.html",
         messages=messages
     )
-@app.route("/admin/products")
-def admin_products():
 
-    # Only logged-in admins can access this page
-    if not session.get("admin_logged_in"):
-        return redirect(url_for("admin_login"))
+@app.route("/admin/messages/delete/<int:message_id>", methods=["POST"])
+@admin_required
+def admin_delete_message(message_id):
 
     connection = get_db_connection()
+    cursor = connection.cursor()
 
-    cursor = connection.cursor(
-        dictionary=True
-    )
+    try:
 
-    cursor.execute(
-        """
-        SELECT *
-        FROM products
-        ORDER BY id DESC
-        """
-    )
+        cursor.execute(
+            """
+            DELETE FROM messages
+            WHERE id = %s
+            """,
+            (message_id,)
+        )
 
-    products = cursor.fetchall()
+        connection.commit()
 
-    cursor.close()
-    connection.close()
+    finally:
+        cursor.close()
+        connection.close()
+
+    return redirect(url_for("admin_messages"))
+
+
+
+@app.route("/admin/products")
+@admin_required
+def admin_products():
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+        cursor.execute(
+            """
+            SELECT *
+            FROM products
+            ORDER BY id DESC
+            """
+        )
+
+        products = cursor.fetchall()
+
+    finally:
+        cursor.close()
+        connection.close()
 
     return render_template(
         "admin_products.html",
         products=products
     )
 
+
 # =========================================================
 # ADMIN - ADD PRODUCT
 # =========================================================
 
-@app.route(
-    "/admin/products/add",
-    methods=["GET", "POST"]
-)
+@app.route("/admin/products/add", methods=["GET", "POST"])
+@admin_required
 def admin_add_product():
-
-    if not session.get("admin_logged_in"):
-        return redirect(url_for("admin_login"))
 
     error = None
 
@@ -693,28 +933,31 @@ def admin_add_product():
         description = request.form.get("description", "").strip()
         image = request.files.get("image")
 
-        # ==========================================
-        # VALIDATION
-        # ==========================================
-
         if not name:
             error = "Please enter the product name."
+
         elif not category:
             error = "Please select a category."
+
         elif not price:
             error = "Please enter the product price."
+
         elif not description:
             error = "Please enter the product description."
+
         elif not image or image.filename == "":
             error = "Please choose a product image."
+
         elif not allowed_file(image.filename):
             error = "Only PNG, JPG, JPEG and WEBP images are allowed."
 
         if not error:
             try:
                 price_value = float(price)
+
                 if price_value < 0:
                     raise ValueError
+
             except ValueError:
                 error = "Please enter a valid product price."
 
@@ -729,7 +972,6 @@ def admin_add_product():
         cursor = None
 
         try:
-            # Upload to persistent Cloudinary storage.
             image_url = upload_product_image(image)
 
             connection = get_db_connection()
@@ -738,13 +980,7 @@ def admin_add_product():
             cursor.execute(
                 """
                 INSERT INTO products
-                (
-                    name,
-                    category,
-                    price,
-                    description,
-                    image
-                )
+                (name, category, price, description, image)
                 VALUES (%s, %s, %s, %s, %s)
                 """,
                 (
@@ -761,24 +997,22 @@ def admin_add_product():
             return redirect(url_for("admin_products"))
 
         except Exception as exception:
+
             print("ADD PRODUCT ERROR:", exception)
 
             if connection:
-                try:
-                    connection.rollback()
-                except Exception:
-                    pass
+                connection.rollback()
 
-            # If the upload succeeded but DB insertion failed,
-            # remove the unused Cloudinary image.
             if image_url:
                 delete_cloudinary_image(image_url)
 
             error = "The product could not be added. Please try again."
 
         finally:
+
             if cursor:
                 cursor.close()
+
             if connection:
                 connection.close()
 
@@ -787,34 +1021,36 @@ def admin_add_product():
         error=error
     )
 
-# ==========================================================
+
+# =========================================================
 # ADMIN - EDIT PRODUCT
-# ==========================================================
+# =========================================================
 
 @app.route(
     "/admin/products/edit/<int:product_id>",
     methods=["GET", "POST"]
 )
+@admin_required
 def admin_edit_product(product_id):
-
-    if not session.get("admin_logged_in"):
-        return redirect(url_for("admin_login"))
 
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
 
-    cursor.execute(
-        """
-        SELECT *
-        FROM products
-        WHERE id = %s
-        """,
-        (product_id,)
-    )
+    try:
+        cursor.execute(
+            """
+            SELECT *
+            FROM products
+            WHERE id = %s
+            """,
+            (product_id,)
+        )
 
-    product = cursor.fetchone()
-    cursor.close()
-    connection.close()
+        product = cursor.fetchone()
+
+    finally:
+        cursor.close()
+        connection.close()
 
     if product is None:
         return "Product not found", 404
@@ -836,8 +1072,10 @@ def admin_edit_product(product_id):
 
         try:
             price_value = float(price)
+
             if price_value < 0:
                 raise ValueError
+
         except ValueError:
             return render_template(
                 "admin_edit_product.html",
@@ -848,31 +1086,26 @@ def admin_edit_product(product_id):
         image_value = product["image"]
         new_cloudinary_image = None
 
-        # Upload a replacement only when the admin selected one.
         if image_file and image_file.filename:
 
             if not allowed_file(image_file.filename):
                 return render_template(
                     "admin_edit_product.html",
                     product=product,
-                    error=(
-                        "Invalid image type. "
-                        "Please choose JPG, JPEG, PNG or WEBP."
-                    )
+                    error="Invalid image type. Please choose JPG, JPEG, PNG or WEBP."
                 )
 
             try:
                 new_cloudinary_image = upload_product_image(image_file)
                 image_value = new_cloudinary_image
+
             except Exception as exception:
                 print("CLOUDINARY UPLOAD ERROR:", exception)
+
                 return render_template(
                     "admin_edit_product.html",
                     product=product,
-                    error=(
-                        "The new image could not be uploaded. "
-                        "Please try again."
-                    )
+                    error="The new image could not be uploaded. Please try again."
                 )
 
         connection = get_db_connection()
@@ -903,6 +1136,7 @@ def admin_edit_product(product_id):
             connection.commit()
 
         except Exception as exception:
+
             connection.rollback()
             print("EDIT PRODUCT DATABASE ERROR:", exception)
 
@@ -919,13 +1153,15 @@ def admin_edit_product(product_id):
             cursor.close()
             connection.close()
 
-        # Database now points to the new image, so the old image can be removed.
         if new_cloudinary_image:
+
             old_image_value = product.get("image")
 
             if is_cloudinary_image(old_image_value):
                 delete_cloudinary_image(old_image_value)
+
             elif old_image_value:
+
                 protected_images = {
                     "perfume.jpg",
                     "perfume_oil.jpg",
@@ -938,6 +1174,7 @@ def admin_edit_product(product_id):
                 }
 
                 if old_image_value not in protected_images:
+
                     old_image_path = os.path.join(
                         app.config["UPLOAD_FOLDER"],
                         old_image_value
@@ -956,6 +1193,7 @@ def admin_edit_product(product_id):
         product=product
     )
 
+
 # =========================================================
 # ADMIN - DELETE PRODUCT
 # =========================================================
@@ -964,33 +1202,29 @@ def admin_edit_product(product_id):
     "/admin/products/delete/<int:product_id>",
     methods=["POST"]
 )
+@admin_required
 def admin_delete_product(product_id):
-
-    if not session.get("admin_logged_in"):
-        return redirect(url_for("admin_login"))
 
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
 
-    cursor.execute(
-        """
-        SELECT *
-        FROM products
-        WHERE id = %s
-        """,
-        (product_id,)
-    )
-
-    product = cursor.fetchone()
-
-    if product is None:
-        cursor.close()
-        connection.close()
-        return redirect(url_for("admin_products"))
-
-    image_value = product.get("image")
-
     try:
+        cursor.execute(
+            """
+            SELECT *
+            FROM products
+            WHERE id = %s
+            """,
+            (product_id,)
+        )
+
+        product = cursor.fetchone()
+
+        if product is None:
+            return redirect(url_for("admin_products"))
+
+        image_value = product.get("image")
+
         cursor.execute(
             """
             DELETE FROM products
@@ -998,22 +1232,27 @@ def admin_delete_product(product_id):
             """,
             (product_id,)
         )
+
         connection.commit()
+
     except Exception as exception:
+
         connection.rollback()
         print("DELETE PRODUCT DATABASE ERROR:", exception)
-        cursor.close()
-        connection.close()
+
         return redirect(url_for("admin_products"))
 
-    cursor.close()
-    connection.close()
+    finally:
+        cursor.close()
+        connection.close()
 
-    # Remove the image only after the database deletion succeeds.
     if image_value:
+
         if is_cloudinary_image(image_value):
             delete_cloudinary_image(image_value)
+
         else:
+
             protected_images = {
                 "perfume.jpg",
                 "perfume_oil.jpg",
@@ -1026,6 +1265,7 @@ def admin_delete_product(product_id):
             }
 
             if image_value not in protected_images:
+
                 image_path = os.path.join(
                     app.config["UPLOAD_FOLDER"],
                     image_value
@@ -1039,29 +1279,18 @@ def admin_delete_product(product_id):
 
     return redirect(url_for("admin_products"))
 
-@app.route("/admin/logout")
+
+# =========================================================
+# ADMIN LOGOUT
+# =========================================================
+
+@app.route("/admin/logout", methods=["POST"])
+@admin_required
 def admin_logout():
 
-    session.pop(
-        "admin_logged_in",
-        None
-    )
+    session.clear()
 
-    session.pop(
-        "admin_id",
-        None
-    )
-
-    session.pop(
-        "admin_username",
-        None
-    )
-
-    return redirect(
-        url_for(
-            "admin_login"
-        )
-    )
+    return redirect(url_for("admin_login"))
 
 
 # =========================================================

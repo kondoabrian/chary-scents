@@ -52,6 +52,14 @@ Admin Login | Charry Scents
                         method="POST"
                     >
 
+                        <!-- CSRF SECURITY TOKEN -->
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+
                         <label for="username">
                             Username
                         </label>
@@ -99,4 +107,3 @@ Admin Login | Charry Scents
 </section>
 
 {% endblock %}
-```

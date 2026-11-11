@@ -315,7 +315,11 @@ Product Management | Charry Scents
                                     class="admin-product-delete-form"
                                     onsubmit="return confirm('Are you sure you want to delete this product? This product will also disappear from the shop.');"
                                 >
-
+                                   <input
+    type="hidden"
+    name="csrf_token"
+    value="{{ csrf_token() }}"
+>
                                     <button
                                         type="submit"
                                         class="admin-product-action admin-delete-btn"
@@ -403,17 +407,31 @@ Product Management | Charry Scents
 
         <div class="admin-products-bottom">
 
+<!-- LOGOUT -->
 
-            <a
-                href="{{ url_for('admin_logout') }}"
-                class="btn btn-main"
-            >
+<form
+    method="POST"
+    action="{{ url_for('admin_logout') }}"
+>
 
-                <i class="bi bi-box-arrow-right"></i>
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+    >
 
-                Logout
+    <button
+        type="submit"
+        class="btn btn-main"
+    >
 
-            </a>
+        <i class="bi bi-box-arrow-right"></i>
+        Logout
+
+    </button>
+
+</form>
+
 
 
         </div>

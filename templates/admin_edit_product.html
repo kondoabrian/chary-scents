@@ -93,7 +93,11 @@ Edit {{ product.name }} | Charry Scents
                 ) }}"
                 enctype="multipart/form-data"
             >
-
+                <input
+    type="hidden"
+    name="csrf_token"
+    value="{{ csrf_token() }}"
+>
 
                 <!-- =========================================
                      PRODUCT NAME

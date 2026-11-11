@@ -1,3 +1,4 @@
+
 // ==========================================================
 // CHARRY SCENTS JAVASCRIPT
 // ==========================================================
@@ -7,46 +8,25 @@
 // PWA INSTALLATION
 // ==========================================================
 
-// The browser stores the installation prompt here when
-// Charry Scents becomes installable.
-
 let deferredInstallPrompt = null;
 
 
-// ==========================================================
-// CHECK WHETHER APP IS ALREADY INSTALLED
-// ==========================================================
-
 function isCharryScentsInstalled() {
-
-    // Android / Chrome / Edge installed PWA.
 
     if (
         window.matchMedia(
             "(display-mode: standalone)"
         ).matches
     ) {
-
         return true;
-
     }
 
-
-    // iPhone / iPad installed web app.
-
-    if (
-        window.navigator.standalone === true
-    ) {
-
+    if (window.navigator.standalone === true) {
         return true;
-
     }
-
 
     return false;
-
 }
-
 
 
 // ==========================================================
@@ -62,7 +42,6 @@ function isIOSDevice() {
 }
 
 
-
 // ==========================================================
 // SHOW INSTALL BUTTON
 // ==========================================================
@@ -70,31 +49,22 @@ function isIOSDevice() {
 function showInstallAppButton() {
 
     const installButton =
-        document.getElementById(
-            "installAppButton"
-        );
-
+        document.getElementById("installAppButton");
 
     if (!installButton) {
         return;
     }
 
-
     if (isCharryScentsInstalled()) {
 
-        installButton.style.display =
-            "none";
+        installButton.style.display = "none";
 
         return;
-
     }
 
-
-    installButton.style.display =
-        "inline-flex";
+    installButton.style.display = "inline-flex";
 
 }
-
 
 
 // ==========================================================
@@ -104,58 +74,39 @@ function showInstallAppButton() {
 function hideInstallAppButton() {
 
     const installButton =
-        document.getElementById(
-            "installAppButton"
-        );
-
+        document.getElementById("installAppButton");
 
     if (!installButton) {
         return;
     }
 
-
-    installButton.style.display =
-        "none";
+    installButton.style.display = "none";
 
 }
-
 
 
 // ==========================================================
 // SHOW INSTALL MESSAGE
 // ==========================================================
 
-function showInstallAppMessage(
-    message
-) {
+function showInstallAppMessage(message) {
 
     const messageElement =
-        document.getElementById(
-            "installAppMessage"
-        );
-
+        document.getElementById("installAppMessage");
 
     if (!messageElement) {
         return;
     }
 
+    messageElement.textContent = message;
 
-    messageElement.textContent =
-        message;
+    setTimeout(function() {
 
+        messageElement.textContent = "";
 
-    setTimeout(
-        function() {
-
-            messageElement.textContent =
-                "";
-
-        },
-        8000
-    );
+    }, 8000);
 
 }
-
 
 
 // ==========================================================
@@ -166,23 +117,13 @@ window.addEventListener(
     "beforeinstallprompt",
     function(event) {
 
-        // Stop the browser from immediately showing
-        // its own installation prompt.
-
         event.preventDefault();
 
-
-        // Save the event so our Install App button
-        // can trigger it later.
-
-        deferredInstallPrompt =
-            event;
-
+        deferredInstallPrompt = event;
 
         console.log(
             "Charry Scents is ready to install."
         );
-
 
         showInstallAppButton();
 
@@ -190,16 +131,11 @@ window.addEventListener(
 );
 
 
-
 // ==========================================================
 // INSTALL CHARRY SCENTS APP
 // ==========================================================
 
 async function installCharryScentsApp() {
-
-    // ------------------------------------------------------
-    // APP ALREADY INSTALLED
-    // ------------------------------------------------------
 
     if (isCharryScentsInstalled()) {
 
@@ -210,14 +146,7 @@ async function installCharryScentsApp() {
         );
 
         return;
-
     }
-
-
-    // ------------------------------------------------------
-    // NORMAL PWA INSTALL PROMPT
-    // Chrome / Edge / Android
-    // ------------------------------------------------------
 
     if (deferredInstallPrompt) {
 
@@ -225,25 +154,18 @@ async function installCharryScentsApp() {
 
             deferredInstallPrompt.prompt();
 
-
             const choiceResult =
                 await deferredInstallPrompt.userChoice;
 
-
-            if (
-                choiceResult.outcome ===
-                "accepted"
-            ) {
+            if (choiceResult.outcome === "accepted") {
 
                 console.log(
                     "Charry Scents installation accepted."
                 );
 
-
                 showInstallAppMessage(
                     "Installing Charry Scents..."
                 );
-
 
                 hideInstallAppButton();
 
@@ -253,17 +175,13 @@ async function installCharryScentsApp() {
                     "Charry Scents installation cancelled."
                 );
 
-
                 showInstallAppMessage(
                     "Installation cancelled. You can install the app later."
                 );
 
             }
 
-
-            deferredInstallPrompt =
-                null;
-
+            deferredInstallPrompt = null;
 
         } catch (error) {
 
@@ -272,22 +190,14 @@ async function installCharryScentsApp() {
                 error
             );
 
-
             showInstallAppMessage(
                 "Unable to open the installation window. Please use your browser menu and choose Install App."
             );
 
         }
 
-
         return;
-
     }
-
-
-    // ------------------------------------------------------
-    // IPHONE / IPAD
-    // ------------------------------------------------------
 
     if (isIOSDevice()) {
 
@@ -296,20 +206,13 @@ async function installCharryScentsApp() {
         );
 
         return;
-
     }
-
-
-    // ------------------------------------------------------
-    // INSTALL PROMPT NOT AVAILABLE
-    // ------------------------------------------------------
 
     showInstallAppMessage(
         "To install Charry Scents, open your browser menu and choose Install App or Add to Home screen."
     );
 
 }
-
 
 
 // ==========================================================
@@ -324,13 +227,9 @@ window.addEventListener(
             "Charry Scents was installed successfully."
         );
 
-
-        deferredInstallPrompt =
-            null;
-
+        deferredInstallPrompt = null;
 
         hideInstallAppButton();
-
 
         showInstallAppMessage(
             "✓ Charry Scents installed successfully!"
@@ -338,7 +237,6 @@ window.addEventListener(
 
     }
 );
-
 
 
 // ==========================================================
@@ -354,17 +252,12 @@ function searchProducts() {
         return;
     }
 
-
     const searchValue =
-        searchInput.value
-            .toLowerCase()
-            .trim();
-
+        searchInput.value.toLowerCase().trim();
 
     applyProductFilters(searchValue);
 
 }
-
 
 
 // ==========================================================
@@ -374,213 +267,127 @@ function searchProducts() {
 let selectedCategory = "all";
 
 
-function filterProducts(
-    category,
-    clickedButton
-) {
+function filterProducts(category, clickedButton) {
 
     selectedCategory = category;
 
-
     const filterButtons =
-        document.querySelectorAll(
-            ".filter-btn"
-        );
+        document.querySelectorAll(".filter-btn");
 
+    filterButtons.forEach(function(button) {
 
-    filterButtons.forEach(
-        function(button) {
+        button.classList.remove("active");
 
-            button.classList.remove(
-                "active"
-            );
-
-        }
-    );
-
+    });
 
     if (clickedButton) {
 
-        clickedButton.classList.add(
-            "active"
-        );
+        clickedButton.classList.add("active");
 
     }
 
-
     const searchInput =
-        document.getElementById(
-            "productSearch"
-        );
-
+        document.getElementById("productSearch");
 
     let searchValue = "";
-
 
     if (searchInput) {
 
         searchValue =
-            searchInput.value
-                .toLowerCase()
-                .trim();
+            searchInput.value.toLowerCase().trim();
 
     }
 
-
-    applyProductFilters(
-        searchValue
-    );
+    applyProductFilters(searchValue);
 
 }
-
 
 
 // ==========================================================
 // APPLY SEARCH + CATEGORY FILTER TOGETHER
 // ==========================================================
 
-function applyProductFilters(
-    searchValue = ""
-) {
+function applyProductFilters(searchValue = "") {
 
     const productCards =
-        document.querySelectorAll(
-            ".product-card"
-        );
-
+        document.querySelectorAll(".product-card");
 
     let visibleProducts = 0;
 
+    productCards.forEach(function(card) {
 
-    productCards.forEach(
-        function(card) {
+        const productText =
+            card.innerText.toLowerCase();
 
+        const productCategory =
+            (
+                card.getAttribute("data-category") || ""
+            ).toLowerCase();
 
-            // Search through all text shown in the product card.
-            // This includes product name, category,
-            // description and price.
+        const wantedCategory =
+            selectedCategory.toLowerCase();
 
-            const productText =
-                card.innerText
-                    .toLowerCase();
+        const matchesSearch =
+            searchValue === "" ||
+            productText.includes(searchValue);
 
+        const matchesCategory =
+            wantedCategory === "all" ||
+            productCategory === wantedCategory;
 
-            // Get product category from:
-            // data-category="{{ product.category }}"
+        const column =
+            card.closest(".product-item") ||
+            card.closest(".col-md-6") ||
+            card.closest(".col-lg-3") ||
+            card.parentElement;
 
-            const productCategory =
-                (
-                    card.getAttribute(
-                        "data-category"
-                    ) || ""
-                )
-                .toLowerCase();
+        if (!column) {
+            return;
+        }
 
+        if (matchesSearch && matchesCategory) {
 
-            const wantedCategory =
-                selectedCategory
-                    .toLowerCase();
+            column.style.display = "";
 
+            visibleProducts++;
 
-            // Check search text.
+        } else {
 
-            const matchesSearch =
-                searchValue === "" ||
-                productText.includes(
-                    searchValue
-                );
-
-
-            // Check selected category.
-
-            const matchesCategory =
-                wantedCategory === "all" ||
-                productCategory ===
-                wantedCategory;
-
-
-            // Find the Bootstrap column containing
-            // this product card.
-
-            const column =
-                card.closest(
-                    ".product-item"
-                ) ||
-                card.closest(
-                    ".col-md-6"
-                ) ||
-                card.closest(
-                    ".col-lg-3"
-                ) ||
-                card.parentElement;
-
-
-            if (!column) {
-                return;
-            }
-
-
-            if (
-                matchesSearch &&
-                matchesCategory
-            ) {
-
-                column.style.display = "";
-
-                visibleProducts++;
-
-            } else {
-
-                column.style.display =
-                    "none";
-
-            }
+            column.style.display = "none";
 
         }
-    );
 
+    });
 
-    updateNoProductsMessage(
-        visibleProducts
-    );
+    updateNoProductsMessage(visibleProducts);
 
 }
-
 
 
 // ==========================================================
 // SHOW MESSAGE WHEN SEARCH FINDS NOTHING
 // ==========================================================
 
-function updateNoProductsMessage(
-    visibleProducts
-) {
+function updateNoProductsMessage(visibleProducts) {
 
     const message =
-        document.getElementById(
-            "noProductsMessage"
-        );
-
+        document.getElementById("noProductsMessage");
 
     if (!message) {
         return;
     }
 
-
     if (visibleProducts === 0) {
 
-        message.style.display =
-            "block";
+        message.style.display = "block";
 
     } else {
 
-        message.style.display =
-            "none";
+        message.style.display = "none";
 
     }
 
 }
-
 
 
 // ==========================================================
@@ -590,12 +397,7 @@ function updateNoProductsMessage(
 function clearProductSearch() {
 
     const searchInput =
-        document.getElementById(
-            "productSearch"
-        );
-
-
-    // Clear search box.
+        document.getElementById("productSearch");
 
     if (searchInput) {
 
@@ -603,48 +405,26 @@ function clearProductSearch() {
 
     }
 
-
-    // Return category to All.
-
     selectedCategory = "all";
 
-
     const filterButtons =
-        document.querySelectorAll(
-            ".filter-btn"
-        );
+        document.querySelectorAll(".filter-btn");
 
+    filterButtons.forEach(function(button) {
 
-    filterButtons.forEach(
-        function(button) {
+        button.classList.remove("active");
 
-            button.classList.remove(
-                "active"
-            );
+        if (
+            button.getAttribute("data-category") === "all"
+        ) {
 
-
-            if (
-                button.getAttribute(
-                    "data-category"
-                ) === "all"
-            ) {
-
-                button.classList.add(
-                    "active"
-                );
-
-            }
+            button.classList.add("active");
 
         }
-    );
 
-
-    // Show every product again.
+    });
 
     applyProductFilters("");
-
-
-    // Put cursor back into search box.
 
     if (searchInput) {
 
@@ -655,31 +435,29 @@ function clearProductSearch() {
 }
 
 
-
 // ==========================================================
 // PRODUCT QUANTITY
 // ==========================================================
 
-function changeQuantity(
-    amount
-) {
+function changeQuantity(amount) {
 
     const quantityElement =
-        document.getElementById(
-            "quantity"
-        );
-
+        document.getElementById("quantity");
 
     if (!quantityElement) {
-        return;
-    }
 
-
-    let quantity =
-        parseInt(
-            quantityElement.innerText
+        console.error(
+            "Quantity input was not found!"
         );
 
+        return;
+
+    }
+
+    // Read the value from the number input.
+
+    let quantity =
+        parseInt(quantityElement.value, 10);
 
     if (isNaN(quantity)) {
 
@@ -687,12 +465,11 @@ function changeQuantity(
 
     }
 
+    // Increase or decrease quantity.
 
-    quantity =
-        quantity + amount;
+    quantity = quantity + amount;
 
-
-    // Quantity cannot be below 1.
+    // Minimum quantity is 1.
 
     if (quantity < 1) {
 
@@ -700,19 +477,24 @@ function changeQuantity(
 
     }
 
+    // Maximum quantity is 99.
 
-    quantityElement.innerText =
-        quantity;
+    if (quantity > 99) {
+
+        quantity = 99;
+
+    }
+
+    // Update the input.
+
+    quantityElement.value = quantity;
 
 }
-
 
 
 // ==========================================================
 // OLD QUANTITY FUNCTIONS
 // ==========================================================
-// These are kept so any older buttons
-// on the website still continue working.
 
 function increaseQuantity() {
 
@@ -728,45 +510,29 @@ function decreaseQuantity() {
 }
 
 
-
 // ==========================================================
-// ADD TO CART
+// OLD ADD TO CART FUNCTION
 // ==========================================================
 
-function addToCart(
-    productName
-) {
+function addToCart(productName) {
 
     const quantityElement =
-        document.getElementById(
-            "quantity"
-        );
-
+        document.getElementById("quantity");
 
     let quantity = 1;
-
 
     if (quantityElement) {
 
         const selectedQuantity =
-            parseInt(
-                quantityElement.innerText
-            );
+            parseInt(quantityElement.value, 10);
 
+        if (!isNaN(selectedQuantity)) {
 
-        if (
-            !isNaN(
-                selectedQuantity
-            )
-        ) {
-
-            quantity =
-                selectedQuantity;
+            quantity = selectedQuantity;
 
         }
 
     }
-
 
     alert(
         quantity +
@@ -778,14 +544,11 @@ function addToCart(
 }
 
 
-
 // ==========================================================
 // PACKAGE SELECTION
 // ==========================================================
 
-function selectPackage(
-    packageName
-) {
+function selectPackage(packageName) {
 
     alert(
         packageName +
@@ -796,20 +559,15 @@ function selectPackage(
 }
 
 
-
 // ==========================================================
 // GET WEBSITE URL
 // ==========================================================
 
 function getWebsiteUrl() {
 
-    return (
-        window.location.origin +
-        "/"
-    );
+    return window.location.origin + "/";
 
 }
-
 
 
 // ==========================================================
@@ -818,113 +576,72 @@ function getWebsiteUrl() {
 
 function copyWebsiteLink() {
 
-    const websiteUrl =
-        getWebsiteUrl();
-
+    const websiteUrl = getWebsiteUrl();
 
     if (
         navigator.clipboard &&
         window.isSecureContext
     ) {
 
-        navigator.clipboard
-            .writeText(
-                websiteUrl
-            )
+        navigator.clipboard.writeText(websiteUrl)
 
-            .then(
-                function() {
+            .then(function() {
 
-                    showCopyMessage(
-                        "✓ Website link copied successfully!"
-                    );
+                showCopyMessage(
+                    "✓ Website link copied successfully!"
+                );
 
-                }
-            )
+            })
 
-            .catch(
-                function() {
+            .catch(function() {
 
-                    copyUsingFallback(
-                        websiteUrl
-                    );
+                copyUsingFallback(websiteUrl);
 
-                }
-            );
+            });
 
     } else {
 
-        copyUsingFallback(
-            websiteUrl
-        );
+        copyUsingFallback(websiteUrl);
 
     }
 
 }
 
 
-
 // ==========================================================
 // COPY WEBSITE FALLBACK
 // ==========================================================
 
-function copyUsingFallback(
-    websiteUrl
-) {
+function copyUsingFallback(websiteUrl) {
 
     const textArea =
-        document.createElement(
-            "textarea"
-        );
+        document.createElement("textarea");
 
+    textArea.value = websiteUrl;
 
-    textArea.value =
-        websiteUrl;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    textArea.style.top = "0";
 
-
-    textArea.style.position =
-        "fixed";
-
-    textArea.style.left =
-        "-9999px";
-
-    textArea.style.top =
-        "0";
-
-
-    document.body.appendChild(
-        textArea
-    );
-
+    document.body.appendChild(textArea);
 
     textArea.focus();
-
     textArea.select();
 
-
-    let successful =
-        false;
-
+    let successful = false;
 
     try {
 
         successful =
-            document.execCommand(
-                "copy"
-            );
+            document.execCommand("copy");
 
     } catch (error) {
 
-        successful =
-            false;
+        successful = false;
 
     }
 
-
-    document.body.removeChild(
-        textArea
-    );
-
+    document.body.removeChild(textArea);
 
     if (successful) {
 
@@ -935,8 +652,7 @@ function copyUsingFallback(
     } else {
 
         showCopyMessage(
-            "Copy was not allowed. " +
-            "Website link: " +
+            "Copy was not allowed. Website link: " +
             websiteUrl
         );
 
@@ -945,42 +661,28 @@ function copyUsingFallback(
 }
 
 
-
 // ==========================================================
 // SHOW COPY MESSAGE
 // ==========================================================
 
-function showCopyMessage(
-    message
-) {
+function showCopyMessage(message) {
 
     const messageElement =
-        document.getElementById(
-            "copyMessage"
-        );
-
+        document.getElementById("copyMessage");
 
     if (!messageElement) {
         return;
     }
 
+    messageElement.innerHTML = message;
 
-    messageElement.innerHTML =
-        message;
+    setTimeout(function() {
 
+        messageElement.innerHTML = "";
 
-    setTimeout(
-        function() {
-
-            messageElement.innerHTML =
-                "";
-
-        },
-        5000
-    );
+    }, 5000);
 
 }
-
 
 
 // ==========================================================
@@ -990,47 +692,29 @@ function showCopyMessage(
 function openSharePopup() {
 
     const popup =
-        document.getElementById(
-            "sharePopup"
-        );
-
+        document.getElementById("sharePopup");
 
     if (!popup) {
         return;
     }
 
-
-    const websiteUrl =
-        getWebsiteUrl();
-
+    const websiteUrl = getWebsiteUrl();
 
     const encodedUrl =
-        encodeURIComponent(
-            websiteUrl
-        );
-
+        encodeURIComponent(websiteUrl);
 
     const shareText =
         "Check out Charry Scents - " +
         "Your Beauty, Our Passion.";
 
-
     const encodedText =
-        encodeURIComponent(
-            shareText
-        );
+        encodeURIComponent(shareText);
 
 
-
-    // ======================================================
     // WHATSAPP
-    // ======================================================
 
     const whatsapp =
-        document.getElementById(
-            "shareWhatsApp"
-        );
-
+        document.getElementById("shareWhatsApp");
 
     if (whatsapp) {
 
@@ -1043,16 +727,10 @@ function openSharePopup() {
     }
 
 
-
-    // ======================================================
     // FACEBOOK
-    // ======================================================
 
     const facebook =
-        document.getElementById(
-            "shareFacebook"
-        );
-
+        document.getElementById("shareFacebook");
 
     if (facebook) {
 
@@ -1063,16 +741,10 @@ function openSharePopup() {
     }
 
 
-
-    // ======================================================
     // X / TWITTER
-    // ======================================================
 
     const twitter =
-        document.getElementById(
-            "shareTwitter"
-        );
-
+        document.getElementById("shareTwitter");
 
     if (twitter) {
 
@@ -1085,16 +757,10 @@ function openSharePopup() {
     }
 
 
-
-    // ======================================================
     // TELEGRAM
-    // ======================================================
 
     const telegram =
-        document.getElementById(
-            "shareTelegram"
-        );
-
+        document.getElementById("shareTelegram");
 
     if (telegram) {
 
@@ -1107,16 +773,10 @@ function openSharePopup() {
     }
 
 
-
-    // ======================================================
     // EMAIL
-    // ======================================================
 
     const email =
-        document.getElementById(
-            "shareEmail"
-        );
-
+        document.getElementById("shareEmail");
 
     if (email) {
 
@@ -1133,27 +793,15 @@ function openSharePopup() {
     }
 
 
-
-    // ======================================================
     // SHOW POPUP
-    // ======================================================
 
-    popup.classList.add(
-        "active"
-    );
+    popup.classList.add("active");
 
+    popup.setAttribute("aria-hidden", "false");
 
-    popup.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-
-    document.body.style.overflow =
-        "hidden";
+    document.body.style.overflow = "hidden";
 
 }
-
 
 
 // ==========================================================
@@ -1163,32 +811,19 @@ function openSharePopup() {
 function closeSharePopup() {
 
     const popup =
-        document.getElementById(
-            "sharePopup"
-        );
-
+        document.getElementById("sharePopup");
 
     if (!popup) {
         return;
     }
 
+    popup.classList.remove("active");
 
-    popup.classList.remove(
-        "active"
-    );
+    popup.setAttribute("aria-hidden", "true");
 
-
-    popup.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-
-    document.body.style.overflow =
-        "";
+    document.body.style.overflow = "";
 
 }
-
 
 
 // ==========================================================
@@ -1197,113 +832,72 @@ function closeSharePopup() {
 
 function copyFromSharePopup() {
 
-    const websiteUrl =
-        getWebsiteUrl();
-
+    const websiteUrl = getWebsiteUrl();
 
     if (
         navigator.clipboard &&
         window.isSecureContext
     ) {
 
-        navigator.clipboard
-            .writeText(
-                websiteUrl
-            )
+        navigator.clipboard.writeText(websiteUrl)
 
-            .then(
-                function() {
+            .then(function() {
 
-                    showSharePopupMessage(
-                        "✓ Website link copied!"
-                    );
+                showSharePopupMessage(
+                    "✓ Website link copied!"
+                );
 
-                }
-            )
+            })
 
-            .catch(
-                function() {
+            .catch(function() {
 
-                    copyPopupUsingFallback(
-                        websiteUrl
-                    );
+                copyPopupUsingFallback(websiteUrl);
 
-                }
-            );
+            });
 
     } else {
 
-        copyPopupUsingFallback(
-            websiteUrl
-        );
+        copyPopupUsingFallback(websiteUrl);
 
     }
 
 }
 
 
-
 // ==========================================================
 // COPY POPUP FALLBACK
 // ==========================================================
 
-function copyPopupUsingFallback(
-    websiteUrl
-) {
+function copyPopupUsingFallback(websiteUrl) {
 
     const textArea =
-        document.createElement(
-            "textarea"
-        );
+        document.createElement("textarea");
 
+    textArea.value = websiteUrl;
 
-    textArea.value =
-        websiteUrl;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    textArea.style.top = "0";
 
-
-    textArea.style.position =
-        "fixed";
-
-    textArea.style.left =
-        "-9999px";
-
-    textArea.style.top =
-        "0";
-
-
-    document.body.appendChild(
-        textArea
-    );
-
+    document.body.appendChild(textArea);
 
     textArea.focus();
-
     textArea.select();
 
-
-    let successful =
-        false;
-
+    let successful = false;
 
     try {
 
         successful =
-            document.execCommand(
-                "copy"
-            );
+            document.execCommand("copy");
 
     } catch (error) {
 
-        successful =
-            false;
+        successful = false;
 
     }
 
-
-    document.body.removeChild(
-        textArea
-    );
-
+    document.body.removeChild(textArea);
 
     if (successful) {
 
@@ -1322,42 +916,28 @@ function copyPopupUsingFallback(
 }
 
 
-
 // ==========================================================
 // SHOW SHARE POPUP MESSAGE
 // ==========================================================
 
-function showSharePopupMessage(
-    message
-) {
+function showSharePopupMessage(message) {
 
     const messageElement =
-        document.getElementById(
-            "sharePopupMessage"
-        );
-
+        document.getElementById("sharePopupMessage");
 
     if (!messageElement) {
         return;
     }
 
+    messageElement.innerHTML = message;
 
-    messageElement.innerHTML =
-        message;
+    setTimeout(function() {
 
+        messageElement.innerHTML = "";
 
-    setTimeout(
-        function() {
-
-            messageElement.innerHTML =
-                "";
-
-        },
-        4000
-    );
+    }, 4000);
 
 }
-
 
 
 // ==========================================================
@@ -1368,9 +948,7 @@ document.addEventListener(
     "keydown",
     function(event) {
 
-        if (
-            event.key === "Escape"
-        ) {
+        if (event.key === "Escape") {
 
             closeSharePopup();
 
@@ -1378,7 +956,6 @@ document.addEventListener(
 
     }
 );
-
 
 
 // ==========================================================
@@ -1389,45 +966,27 @@ document.addEventListener(
     "DOMContentLoaded",
     function() {
 
-
-        // ==================================================
         // PWA INSTALL BUTTON
-        // ==================================================
 
-        if (
-            isCharryScentsInstalled()
-        ) {
+        if (isCharryScentsInstalled()) {
 
             hideInstallAppButton();
 
-        } else if (
-            deferredInstallPrompt
-        ) {
+        } else if (deferredInstallPrompt) {
 
             showInstallAppButton();
 
-        } else if (
-            isIOSDevice()
-        ) {
-
-            // iOS does not provide beforeinstallprompt.
-            // We still show the button so we can explain
-            // how to use Safari's Add to Home Screen.
+        } else if (isIOSDevice()) {
 
             showInstallAppButton();
 
         }
 
 
-        // ==================================================
         // PRODUCT SEARCH
-        // ==================================================
 
         const searchInput =
-            document.getElementById(
-                "productSearch"
-            );
-
+            document.getElementById("productSearch");
 
         if (searchInput) {
 
@@ -1439,9 +998,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
         // START SHOP WITH ALL PRODUCTS
-        // ==================================================
 
         if (
             document.querySelector(
