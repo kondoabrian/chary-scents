@@ -36,12 +36,9 @@
                 href="{{ url_for('shop') }}"
                 class="btn btn-outline-secondary"
             >
-
                 <i class="bi bi-arrow-left"></i>
                 Back to Shop
-
             </a>
-
 
             {% if session.get("admin_logged_in") %}
 
@@ -49,10 +46,8 @@
                     href="{{ url_for('admin_products') }}"
                     class="btn btn-main"
                 >
-
                     <i class="bi bi-box-seam"></i>
                     Back to Manage Products
-
                 </a>
 
             {% endif %}
@@ -156,6 +151,14 @@
                         ) }}"
                     >
 
+                        <!-- CSRF SECURITY TOKEN -->
+
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
 
                         <!-- QUANTITY -->
 
@@ -171,28 +174,36 @@
 
                                 <!-- DECREASE QUANTITY -->
 
-                             <button
-    type="button"
-    onclick="document.getElementById('quantity').stepDown()">
-    −
-</button>
+                                <button
+                                    type="button"
+                                    onclick="document.getElementById('quantity').stepDown()"
+                                >
+                                    −
+                                </button>
 
-<input
-    type="number"
-    id="quantity"
-    name="quantity"
-    value="1"
-    min="1"
-    max="99"
-    step="1"
-    required
->
 
-<button
-    type="button"
-    onclick="document.getElementById('quantity').stepUp()">
-    +
-</button>
+                                <!-- QUANTITY INPUT -->
+
+                                <input
+                                    type="number"
+                                    id="quantity"
+                                    name="quantity"
+                                    value="1"
+                                    min="1"
+                                    max="99"
+                                    step="1"
+                                    required
+                                >
+
+
+                                <!-- INCREASE QUANTITY -->
+
+                                <button
+                                    type="button"
+                                    onclick="document.getElementById('quantity').stepUp()"
+                                >
+                                    +
+                                </button>
 
 
                             </div>

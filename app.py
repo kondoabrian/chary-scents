@@ -43,7 +43,33 @@ cloudinary.config(
 # =========================================================
 
 app = Flask(__name__)
+
+app = Flask(__name__)
+
+# =========================================================
+# FLASK SECRET KEY
+# =========================================================
+
+app.config["SECRET_KEY"] = os.getenv(
+    "SECRET_KEY",
+    "local-development-secret-key"
+)
+
+# Session cookie security
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=(
+        os.getenv("COOKIE_SECURE", "false").lower() == "true"
+    )
+)
+
+# =========================================================
+# CSRF SECURITY
+# =========================================================
+
 csrf = CSRFProtect(app)
+
 UPLOAD_FOLDER = os.path.join(
     app.root_path,
     "static",
@@ -59,23 +85,6 @@ ALLOWED_EXTENSIONS = {
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
-
-# =========================================================
-# FLASK SECRET KEY
-# =========================================================
-app.config["SECRET_KEY"] = os.getenv(
-    "SECRET_KEY",
-    "local-development-secret-key"
-)
-
-# Session cookie security
-app.config.update(
-    SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=(
-        os.getenv("COOKIE_SECURE", "false").lower() == "true"
-    )
-)
 
 @app.context_processor
 def inject_cart_count():
