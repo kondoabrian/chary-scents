@@ -1,5 +1,7 @@
+
 Flask
 gunicorn
 mysql-connector-python
 python-dotenv
 cloudinary
+Flask-WTF==1.3.0
