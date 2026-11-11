@@ -1,33 +1,285 @@
+```html
 {% extends "base.html" %}
 
 {% block title %}Your Shopping Cart | Charry Scents{% endblock %}
 
 {% block content %}
 
+<style>
+
+/* ================= CART GENERAL ================= */
+
+.cart-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cart-table th,
+.cart-table td {
+    padding: 12px 8px;
+    vertical-align: middle;
+}
+
+.cart-product {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.cart-product img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 7px;
+    flex-shrink: 0;
+}
+
+.cart-product-name {
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.cart-price,
+.cart-subtotal {
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.cart-quantity-form {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cart-quantity-form input {
+    width: 55px;
+    min-width: 0;
+}
+
+.cart-update-button,
+.cart-remove-button {
+    font-size: 12px;
+    padding: 7px 9px;
+    white-space: nowrap;
+}
+
+.cart-remove-form {
+    margin: 0;
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+
+/* ================= MOBILE CART CARDS ================= */
+
+.mobile-cart {
+    display: none;
+}
+
+.mobile-cart-card {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 15px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    background: #fff;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.mobile-cart-product {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    min-width: 0;
+}
+
+.mobile-cart-product img {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.mobile-cart-product-details {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.mobile-cart-product-details h6 {
+    font-size: 14px;
+    margin-bottom: 4px;
+    overflow-wrap: anywhere;
+}
+
+.mobile-cart-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.mobile-cart-info strong {
+    text-align: right;
+}
+
+
+/* ================= THREE EQUAL CONTROLS ================= */
+
+.mobile-cart-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    margin-top: 12px;
+    width: 100%;
+    align-items: stretch;
+}
+
+.mobile-cart-actions form {
+    display: contents;
+    margin: 0;
+}
+
+.mobile-cart-actions input,
+.mobile-cart-actions button {
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 5px 3px;
+    font-size: 11px;
+    text-align: center;
+    border-radius: 6px;
+}
+
+.mobile-cart-actions input {
+    padding: 4px;
+}
+
+.mobile-cart-actions button {
+    white-space: nowrap;
+}
+
+
+/* ================= PHONE SCREEN ================= */
+
+@media (max-width: 767px) {
+
+    .desktop-cart {
+        display: none !important;
+    }
+
+    .mobile-cart {
+        display: block;
+    }
+
+    .cart-wrapper {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .cart-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .cart-actions a {
+        width: 100%;
+        text-align: center;
+    }
+
+    .cart-total {
+        font-size: 19px;
+    }
+
+    .mobile-cart-card {
+        padding: 12px;
+    }
+
+}
+
+
+/* ================= EXTRA SMALL PHONES ================= */
+
+@media (max-width: 360px) {
+
+    .mobile-cart-actions {
+        gap: 5px;
+    }
+
+    .mobile-cart-actions input,
+    .mobile-cart-actions button {
+        font-size: 10px;
+        padding: 4px 2px;
+        height: 36px;
+    }
+
+}
+
+</style>
+
+
+<!-- ================= PAGE HEADER ================= -->
+
 <section class="page-header">
+
     <div class="container">
+
         <p>Your Selection</p>
+
         <h1>Shopping Cart</h1>
+
     </div>
+
 </section>
 
+
+<!-- ================= CART SECTION ================= -->
+
 <section class="section">
+
     <div class="container">
 
         {% if cart_items %}
 
-            <div class="table-responsive">
+        <div class="cart-wrapper">
 
-                <table class="table table-sm align-middle">
+
+            <!-- ====================================== -->
+            <!-- DESKTOP CART TABLE -->
+            <!-- ====================================== -->
+
+            <div class="desktop-cart">
+
+                <table class="table cart-table">
 
                     <thead>
+
                         <tr>
                             <th>Product</th>
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Subtotal</th>
-                            <th>Action</th>
+                            <th style="min-width: 120px;">Action</th>
                         </tr>
+
                     </thead>
 
                     <tbody>
@@ -36,60 +288,63 @@
 
                         <tr>
 
-                            <!-- PRODUCT DETAILS -->
+                            <!-- PRODUCT -->
+
                             <td>
-                                <div class="d-flex align-items-center gap-2">
 
-                                    <div style="width: 55px; height: 55px; flex-shrink: 0;">
+                                <div class="cart-product">
 
-                                        {% if item.image and (
-                                            item.image.startswith('http://')
-                                            or item.image.startswith('https://')
-                                        ) %}
+                                    {% if item.image and (
+                                        item.image.startswith('http://')
+                                        or item.image.startswith('https://')
+                                    ) %}
 
-                                            <img
-                                                src="{{ item.image }}"
-                                                alt="{{ item.name }}"
-                                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;"
-                                            >
+                                        <img
+                                            src="{{ item.image }}"
+                                            alt="{{ item.name }}"
+                                        >
 
-                                        {% else %}
+                                    {% else %}
 
-                                            <img
-                                                src="{{ url_for('static', filename='images/' ~ item.image) }}"
-                                                alt="{{ item.name }}"
-                                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;"
-                                            >
+                                        <img
+                                            src="{{ url_for('static', filename='images/' ~ item.image) }}"
+                                            alt="{{ item.name }}"
+                                        >
 
-                                        {% endif %}
+                                    {% endif %}
 
-                                    </div>
+                                    <div>
 
-                                    <div style="min-width: 0;">
-                                        <strong style="font-size: 13px;">
+                                        <strong class="cart-product-name">
                                             {{ item.name }}
                                         </strong>
 
                                         <div class="text-muted small">
                                             {{ item.category }}
                                         </div>
+
                                     </div>
 
                                 </div>
+
                             </td>
 
+
                             <!-- PRICE -->
-                            <td style="font-size: 12px; white-space: nowrap;">
+
+                            <td class="cart-price">
                                 UGX {{ "{:,.0f}".format(item.price) }}
                             </td>
 
-                            <!-- UPDATE QUANTITY -->
+
+                            <!-- QUANTITY AND UPDATE -->
+
                             <td>
 
                                 <form
                                     method="POST"
                                     action="{{ url_for('update_cart', product_id=item.id) }}"
-                                    class="d-flex flex-wrap align-items-center gap-1"
+                                    class="cart-quantity-form"
                                 >
 
                                     <input
@@ -106,13 +361,11 @@
                                         max="99"
                                         required
                                         class="form-control form-control-sm"
-                                        style="width: 50px; padding: 4px;"
                                     >
 
                                     <button
                                         type="submit"
-                                        class="btn btn-outline-secondary btn-sm"
-                                        style="padding: 5px 7px; font-size: 11px;"
+                                        class="btn btn-outline-secondary btn-sm cart-update-button"
                                     >
                                         Update
                                     </button>
@@ -121,19 +374,26 @@
 
                             </td>
 
+
                             <!-- SUBTOTAL -->
-                            <td style="font-size: 12px; white-space: nowrap;">
+
+                            <td class="cart-subtotal">
+
                                 <strong>
                                     UGX {{ "{:,.0f}".format(item.subtotal) }}
                                 </strong>
+
                             </td>
 
-                            <!-- REMOVE PRODUCT -->
+
+                            <!-- REMOVE -->
+
                             <td>
 
                                 <form
                                     method="POST"
                                     action="{{ url_for('remove_from_cart', product_id=item.id) }}"
+                                    class="cart-remove-form"
                                 >
 
                                     <input
@@ -144,8 +404,7 @@
 
                                     <button
                                         type="submit"
-                                        class="btn btn-outline-danger btn-sm"
-                                        style="padding: 5px 7px; font-size: 11px; white-space: nowrap;"
+                                        class="btn btn-outline-danger btn-sm cart-remove-button"
                                     >
                                         <i class="bi bi-trash"></i>
                                         Remove
@@ -165,65 +424,250 @@
 
             </div>
 
+
+            <!-- ====================================== -->
+            <!-- MOBILE CART CARDS -->
+            <!-- ====================================== -->
+
+            <div class="mobile-cart">
+
+                {% for item in cart_items %}
+
+                <div class="mobile-cart-card">
+
+
+                    <!-- PRODUCT DETAILS -->
+
+                    <div class="mobile-cart-product">
+
+                        {% if item.image and (
+                            item.image.startswith('http://')
+                            or item.image.startswith('https://')
+                        ) %}
+
+                            <img
+                                src="{{ item.image }}"
+                                alt="{{ item.name }}"
+                            >
+
+                        {% else %}
+
+                            <img
+                                src="{{ url_for('static', filename='images/' ~ item.image) }}"
+                                alt="{{ item.name }}"
+                            >
+
+                        {% endif %}
+
+                        <div class="mobile-cart-product-details">
+
+                            <h6>{{ item.name }}</h6>
+
+                            <small class="text-muted">
+                                {{ item.category }}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRICE -->
+
+                    <div class="mobile-cart-info">
+
+                        <span>Price:</span>
+
+                        <strong>
+                            UGX {{ "{:,.0f}".format(item.price) }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- QUANTITY -->
+
+                    <div class="mobile-cart-info">
+
+                        <span>Quantity:</span>
+
+                        <strong>{{ item.quantity }}</strong>
+
+                    </div>
+
+
+                    <!-- SUBTOTAL -->
+
+                    <div class="mobile-cart-info">
+
+                        <span>Subtotal:</span>
+
+                        <strong>
+                            UGX {{ "{:,.0f}".format(item.subtotal) }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- THREE EQUAL-SIZED CONTROLS -->
+
+                    <div class="mobile-cart-actions">
+
+
+                        <!-- QUANTITY INPUT -->
+
+                        <input
+                            type="number"
+                            form="update-cart-{{ item.id }}"
+                            name="quantity"
+                            value="{{ item.quantity }}"
+                            min="1"
+                            max="99"
+                            required
+                            class="form-control"
+                            aria-label="Quantity"
+                        >
+
+
+                        <!-- UPDATE FORM -->
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('update_cart', product_id=item.id) }}"
+                            id="update-cart-{{ item.id }}"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-secondary"
+                            >
+                                Update
+                            </button>
+
+                        </form>
+
+
+                        <!-- REMOVE FORM -->
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('remove_from_cart', product_id=item.id) }}"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-danger"
+                            >
+                                <i class="bi bi-trash"></i>
+                                Remove
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- ====================================== -->
             <!-- CART TOTAL -->
+            <!-- ====================================== -->
+
             <div class="text-end mt-4">
 
-                <h4>
+                <h4 class="cart-total">
+
                     Total:
+
                     UGX {{ "{:,.0f}".format(cart_total) }}
+
                 </h4>
 
             </div>
 
-            <!-- CART ACTIONS -->
-            <div class="d-flex flex-wrap justify-content-between gap-3 mt-4">
+
+            <!-- ====================================== -->
+            <!-- CART NAVIGATION BUTTONS -->
+            <!-- ====================================== -->
+
+            <div class="cart-actions mt-4">
 
                 <a
                     href="{{ url_for('shop') }}"
                     class="btn btn-outline-secondary"
                 >
+
                     <i class="bi bi-arrow-left"></i>
                     Continue Shopping
+
                 </a>
+
 
                 <a
                     href="{{ url_for('order_on_whatsapp') }}"
                     class="btn btn-success"
                 >
+
                     <i class="bi bi-whatsapp"></i>
                     Order on WhatsApp
+
                 </a>
 
             </div>
+
+        </div>
+
 
         {% else %}
 
-            <!-- EMPTY CART -->
-            <div class="text-center py-5">
 
-                <i
-                    class="bi bi-bag"
-                    style="font-size: 55px;"
-                ></i>
+        <!-- EMPTY CART -->
 
-                <h3 class="mt-3">Your cart is empty</h3>
+        <div class="text-center py-5">
 
-                <p class="text-muted">
-                    You haven't added any products yet.
-                </p>
+            <i
+                class="bi bi-bag"
+                style="font-size: 55px;"
+            ></i>
 
-                <a
-                    href="{{ url_for('shop') }}"
-                    class="btn btn-main mt-3"
-                >
-                    Explore Products
-                </a>
+            <h3 class="mt-3">
+                Your cart is empty
+            </h3>
 
-            </div>
+            <p class="text-muted">
+                You haven't added any products yet.
+            </p>
+
+            <a
+                href="{{ url_for('shop') }}"
+                class="btn btn-main mt-3"
+            >
+                Explore Products
+            </a>
+
+        </div>
 
         {% endif %}
 
     </div>
+
 </section>
 
 {% endblock %}
+```
